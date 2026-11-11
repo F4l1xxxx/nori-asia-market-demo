@@ -289,3 +289,44 @@ body.market .demo-ribbon{background:var(--mart-yellow);color:#433621}
 .retail-photo-banner-copy p{font-size:12px;line-height:1.9;color:#4e6a5b;max-width:440px;margin:2px 0 19px}
 .retail-photo-banner-copy .market-button{font-size:11px;min-height:43px;padding:11px 16px}
 @media(max-width:760px){.retail-photo-banner{display:flex;flex-direction:column;margin-top:20px}.retail-photo-banner-img{min-height:220px}.retail-photo-banner-copy{padding:28px 24px}.retail-photo-banner-copy h2{font-size:29px}}
+
+/* Stable iOS/Android search UX. Input 16px prevents Safari focus auto-zoom. */
+body.market .search-wrap{position:relative;z-index:40;overflow:visible}
+body.market .search-wrap input{font-size:16px;line-height:1.25;min-width:0;width:100%}
+body.market .search-wrap input::-webkit-search-cancel-button{cursor:pointer}
+.search-suggestions{
+ position:absolute;left:-1px;right:-1px;top:calc(100% + 8px);z-index:80;
+ background:#fff;border:1px solid #e3e6e2;border-radius:11px;
+ box-shadow:0 18px 40px rgba(22,38,31,.20);
+ max-height:52vh;max-height:min(430px,55dvh);
+ overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ padding:5px 0;
+}
+.search-suggestions[hidden]{display:none!important}
+.search-suggestion-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px 10px;font-size:10px;font-weight:900;color:#77857a;letter-spacing:.06em}
+.search-suggestion-heading strong{letter-spacing:0;color:#40594a}
+.search-suggestion{width:100%;border:0;border-top:1px solid #eff1ed;background:#fff;display:flex;align-items:center;text-align:left;padding:11px 15px;gap:12px;color:#26352e}
+.search-suggestion:hover,.search-suggestion:focus-visible{background:#f4f7f1}
+.search-suggestion-icon{display:flex;align-items:center;justify-content:center;flex:none;font-size:24px;width:42px;height:42px;background:#f6f1e8;border-radius:8px}
+.search-suggestion-label{min-width:0;flex:1}
+.search-suggestion-label strong{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-suggestion-label small{display:block;font-size:10px;color:#819087;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-suggestion-price{font-size:13px;font-weight:900;color:#cf3b2b;white-space:nowrap}
+.search-view-all{width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 17px;color:#fff;font-size:12px;font-weight:900;text-align:left;border:0;background:#e23d2d;gap:12px}
+.search-view-all:hover{background:#c72e24}
+.search-view-all span{font-size:16px;flex:none}
+.search-no-results{padding:18px;font-size:12px;line-height:1.65;color:#556b5b}
+@media(max-width:760px){
+ body.market .search-wrap input{font-size:16px!important;line-height:1.25}
+ body.market .search-wrap{height:46px}
+ body.market .header-main{height:116px}
+ .search-suggestions{left:-1px;right:-1px;top:calc(100% + 7px);max-height:49vh;max-height:min(420px,49dvh)}
+ .search-suggestion{padding:10px 11px}
+ .search-suggestion-label strong{font-size:13px}
+ .search-view-all{font-size:12px;padding:14px}
+}
+
+/* Avoid iOS focus zoom and competing scroll animations in the sticky search header.
+   Smooth scrolling is applied only to deliberate catalog navigation. */
+html{scroll-behavior:auto}
+html:has(#global-search:focus){scroll-padding-top:0!important}

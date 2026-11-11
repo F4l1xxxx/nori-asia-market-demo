@@ -5,8 +5,8 @@
 <meta name="description" content="ASIA MART — moderne Asia-Supermarkt-Demo mit 150 Beispielartikeln, Angeboten und interaktivem Warenkorb.">
 <title>ASIA MART — Dein Asia-Supermarkt online | Demo</title>
 <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./market.css">
-<script defer src="./app.js"></script>
+<link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./market.css?v=search-20261111">
+<script defer src="./app.js?v=search-20261111"></script>
 </head><body class="market">
 <div class="demo-top"><span>INTERAKTIVE SHOP-DEMO</span> Alle Preise, Angebote und Produkte sind fiktiv · Kein echter Verkauf</div>
 <div class="service-top"><div class="layout service-top-inner">
@@ -15,7 +15,7 @@
 <header class="header shop-header" id="top">
 <div class="layout header-main">
 <a class="market-logo" href="#top" aria-label="Asia Mart – Startseite"><span class="market-logo-star">✳</span><span class="market-logo-name">ASIA<span>MART.</span><small>DEIN ASIA-SUPERMARKT</small></span></a>
-<div class="search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg><input id="global-search" type="search" placeholder="Produkte suchen: Ramen, Reis, Mochi, Sriracha ..." autocomplete="off" aria-label="Produkte durchsuchen"><kbd>150 Artikel</kbd></div>
+<div class="search-wrap" role="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg><input id="global-search" type="search" inputmode="search" enterkeyhint="search" placeholder="Produkte suchen: Ramen, Reis, Mochi, Sriracha ..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Produkte durchsuchen" aria-controls="search-suggestions" aria-expanded="false"><kbd>150 Artikel</kbd><div id="search-suggestions" class="search-suggestions" hidden></div></div>
 <div class="header-actions"><button id="wishlist-button" class="icon-btn" aria-label="Merkliste"><span class="icon-heart">♡</span><span class="action-label">Merkliste</span><span class="mini-badge" id="fav-count">0</span></button><button id="cart-button" class="icon-btn cart-action" aria-label="Warenkorb öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.8l2-8H6"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg><span class="action-label">Warenkorb</span><span id="cart-count" class="mini-badge badge-active">0</span></button></div>
 </div>
 <nav class="nav-row store-nav" aria-label="Shopnavigation"><div class="layout nav-inner">

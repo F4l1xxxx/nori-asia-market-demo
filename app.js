@@ -320,8 +320,51 @@ function navigate(catName){
  cat=catName;onlyFaves=false;limit=20;search="";$("#global-search").value="";
  renderCatalog();$("#catalog").scrollIntoView({behavior:"smooth",block:"start"});
 }
+
+/* Mobile-stable search: never mutate the document height while typing.
+   Results appear in an overlay; only a deliberate tap opens the filtered catalog. */
+function matchingSearchProducts(query){
+ const normalized=query.trim().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de");
+ if(!normalized)return [];
+ return products.filter(p=>(p.name+" "+p.category+" "+p.origin+" "+p.brand).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de").includes(normalized));
+}
+function closeSearchSuggestions(){
+ const list=$("#search-suggestions"),input=$("#global-search");
+ list.hidden=true;list.innerHTML="";input.setAttribute("aria-expanded","false");
+}
+function renderSearchSuggestions(){
+ const list=$("#search-suggestions"),input=$("#global-search");
+ const query=input.value.trim();
+ if(!query){closeSearchSuggestions();return;}
+ const matches=matchingSearchProducts(query);
+ const entries=matches.slice(0,6).map(p=>
+   '<button type="button" class="search-suggestion" data-search-product="'+p.id+'">'+
+   '<span class="search-suggestion-icon" aria-hidden="true">'+p.emoji+'</span>'+
+   '<span class="search-suggestion-label"><strong>'+safe(p.name)+'</strong><small>'+safe(p.size)+' · '+safe(p.category)+'</small></span>'+
+   '<span class="search-suggestion-price">'+money(p.price)+'</span></button>'
+ ).join("");
+ list.innerHTML='<div class="search-suggestion-heading"><span>PRODUKTVORSCHLÄGE</span><strong>'+matches.length+' Treffer</strong></div>'+
+   (matches.length?entries:'<div class="search-no-results">Keine passenden Artikel. Probiere einen anderen Suchbegriff.</div>')+
+   (matches.length?'<button type="button" class="search-view-all" data-search-all>Alle '+matches.length+' Treffer im Sortiment anzeigen <span>↗</span></button>':
+   '<button type="button" class="search-view-all" data-search-clear>Suche zurücksetzen <span>×</span></button>');
+ list.hidden=false;input.setAttribute("aria-expanded","true");
+}
+function showSearchResults(){
+ const input=$("#global-search");
+ const query=input.value.trim();
+ closeSearchSuggestions();
+ search=query;cat="Alle";origin="Alle";onlyFaves=false;limit=20;
+ renderCatalog();
+ input.blur(); // dismiss on-screen keyboard before an intentional navigation
+ window.setTimeout(()=>$("#catalog").scrollIntoView({behavior:"smooth",block:"start"}),150);
+}
+
 function initializeEvents(){
  document.addEventListener("click",e=>{
+ const suggestion=e.target.closest("[data-search-product]");if(suggestion){e.preventDefault();closeSearchSuggestions();$("#global-search").blur();showProduct(suggestion.dataset.searchProduct);return}
+ if(e.target.closest("[data-search-all]")){e.preventDefault();showSearchResults();return}
+ if(e.target.closest("[data-search-clear]")){e.preventDefault();$("#global-search").value="";closeSearchSuggestions();$("#global-search").focus();return}
+ if(!e.target.closest(".search-wrap"))closeSearchSuggestions();
  const nav=e.target.closest("[data-navcat]");if(nav){e.preventDefault();navigate(nav.dataset.navcat);return}
  const land=e.target.closest("[data-orig]");if(land){e.preventDefault();onlyFaves=false;cat="Alle";origin=land.dataset.orig;search="";$("#global-search").value="";limit=20;renderCatalog();$("#catalog").scrollIntoView({behavior:"smooth",block:"start"});return}
  const chip=e.target.closest("[data-chip]");if(chip){cat=chip.dataset.chip;limit=20;onlyFaves=false;renderCatalog();return}
@@ -343,8 +386,9 @@ function initializeEvents(){
  });
  $("#cart-button").addEventListener("click",()=>overlay("cart"));
  $("#wishlist-button").addEventListener("click",()=>{onlyFaves=true;cat="Alle";origin="Alle";search="";$("#global-search").value="";renderCatalog();$("#catalog").scrollIntoView({behavior:"smooth",block:"start"});toast(favorites.length?favorites.length+" Artikel auf deiner Merkliste":"Deine Merkliste ist noch leer")});
- $("#global-search").addEventListener("input",e=>{search=e.target.value;onlyFaves=false;cat="Alle";origin="Alle";limit=20;renderCatalog()});
- $("#global-search").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#catalog").scrollIntoView({behavior:"smooth"})}});
+ $("#global-search").addEventListener("input",()=>{renderSearchSuggestions()});
+ $("#global-search").addEventListener("focus",()=>{renderSearchSuggestions()});
+ $("#global-search").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();e.stopPropagation();if(e.target.value.trim()){renderSearchSuggestions()}else{closeSearchSuggestions()}e.target.blur()}else if(e.key==="Escape"){closeSearchSuggestions();e.target.blur()}});
  $("#origin-filter").addEventListener("change",e=>{origin=e.target.value;limit=20;renderCatalog()});
  $("#sort-filter").addEventListener("change",e=>{sort=e.target.value;limit=20;renderCatalog()});
  $("#more-button").addEventListener("click",()=>{limit+=20;renderCatalog()});
