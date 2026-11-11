@@ -56,3 +56,23 @@
   .cart-recommendation{padding:9px}
   .checkout-modal-card .demo-coupon{margin-top:15px}
 }
+
+/* Shipping and payment demonstration */
+.fulfillment{margin-top:15px;margin-bottom:100px}
+.fulfillment-top{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:28px}
+.fulfillment-top h2{font:800 clamp(29px,3.1vw,42px)/1.2 'Manrope',sans-serif;letter-spacing:-.06em;margin:13px 0}
+.fulfillment-top h2 em{font-family:'Playfair Display',serif;font-weight:500;color:#b67e4b;letter-spacing:-.055em}
+.fulfillment-top p{color:#65776b;font-size:13px;line-height:1.8}
+.fulfillment-mark{color:#718b76;background:#edf3e9;padding:10px 14px;border-radius:22px;font-size:10px;letter-spacing:.07em;font-weight:800;white-space:nowrap}
+.shipping-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.shipping-tile{display:flex;gap:19px;align-items:center;padding:24px 22px;border-radius:13px;background:#f1f4ed;border:1px solid #e2e9df}
+.shipping-symbol{font-size:25px;color:#2b5a45;display:grid;place-items:center;background:#e2eadf;border-radius:50%;width:49px;height:49px;flex-shrink:0}
+.shipping-tile strong{font:800 14px 'Manrope',sans-serif;color:#254936}
+.shipping-tile p{color:#5d7566;font-weight:700;font-size:12px;margin:6px 0}
+.shipping-tile small{color:#849188;font-size:11px}
+.payment-row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:22px;padding:18px 4px;border-top:1px solid #e3e9e0}
+.payment-row>span{font-weight:800;font-size:12px}
+.payment-methods{display:flex;gap:8px;align-items:center}
+.payment-methods span{background:#fff;border:1px solid #dde5dc;padding:8px 11px;border-radius:7px;font:800 11px 'Manrope',sans-serif;letter-spacing:-.02em;color:#496254}
+.payment-row small{font-size:10px;color:#8a968d}
+@media(max-width:760px){.fulfillment{margin-top:5px;margin-bottom:75px}.fulfillment-top{align-items:start;flex-direction:column}.fulfillment-mark{font-size:9px}.shipping-tiles{grid-template-columns:1fr}.shipping-tile{padding:18px}.payment-row{flex-direction:column;align-items:start}.payment-methods{flex-wrap:wrap}.fulfillment-top h2{font-size:32px}}
