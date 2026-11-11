@@ -30,7 +30,7 @@ categories.forEach((c, ci)=>{
     products.push({
       id:"n"+String(products.length+1).padStart(3,"0"),
       name, size, origin, price:Number(price), emoji, category:c.name, ci, idx:i,
-      brand:["NORI SELECT","KOMORI","HANAMI","MORI MARKET","SORA"][i%5],
+      brand:["ASIA MART SELECT","KOMORI","HANAMI","MORI MARKET","SORA"][i%5],
       colors:colorSets[(ci*2+i)%colorSets.length],
       unitPrice:money(Number(price)/qty)+"/"+measure,
       featured:[0,2,5,8,11,15,19,22].includes(i),
@@ -121,15 +121,16 @@ function photoFor(p){
 }
 function pack(p,large){
  const c=p.colors;
- return '<div class="pack pack-type-'+p.ci+'" style="background:linear-gradient(142deg,'+c[0]+',#fffaf1 72%);color:'+c[1]+'">'+
+ const angle=p.ci===1?"150deg":p.ci===3?"145deg":"125deg";
+ return '<div class="pack pack-type-'+p.ci+'" style="background:linear-gradient('+angle+','+c[0]+' 0%,#fff6e1 82%);color:'+c[1]+'">'+
  '<span class="pack-brand">'+safe(p.brand)+'</span>'+
- '<span class="pack-graphic pack-photo-frame" aria-hidden="true"><img loading="lazy" src="./assets/'+photoFor(p)+'" alt=""></span>'+
+ '<span class="pack-graphic" aria-hidden="true">'+p.emoji+'</span>'+
  '<span class="pack-name">'+safe(p.name)+'</span>'+
  '<span class="pack-size">'+safe(p.size)+'</span></div>';
 }
 function productCard(p){
  const on=favorites.includes(p.id);
- const flag=p.idx%9===0?"NEU ENTDECKEN":p.idx%7===0?"UNSER TIPP":p.idx%11===0?"REZEPT-IDEAL":"";
+ const flag=p.idx%7===1?"DEMO-ANGEBOT":p.idx%9===0?"NEU":p.idx%6===0?"BELIEBT":"";
  return '<article class="product-card" data-pid="'+p.id+'">'+
  '<div class="product-visual" data-product="'+p.id+'" role="button" tabindex="0" aria-label="Details zu '+safe(p.name)+'">'+
  (flag?'<span class="flag">'+flag+'</span>':"")+
@@ -138,7 +139,7 @@ function productCard(p){
  '<div class="product-body"><span class="product-overline">'+safe(p.category)+' · '+safe(p.origin)+'</span>'+
  '<button class="product-name" data-product="'+p.id+'">'+safe(p.name)+'</button>'+
  '<p class="product-subline">'+safe(p.size)+' · '+safe(p.brand)+'</p>'+
- '<div class="price-row"><div><div class="price">'+money(p.price)+'</div><div class="unit-price">'+safe(p.unitPrice)+'</div></div>'+
+ '<div class="price-row"><div><div class="price">'+money(p.price)+(p.idx%7===1?'<span class="fake-was">'+money(Math.round(p.price*1.15*100)/100)+'</span>':'')+'</div><div class="unit-price">'+safe(p.unitPrice)+'</div></div>'+
  '<button class="add-btn" data-add="'+p.id+'" aria-label="'+safe(p.name)+' zum Warenkorb hinzufügen">+</button></div></div></article>';
 }
 function initCategories(){
@@ -178,7 +179,7 @@ function renderCatalog(){
 }
 function featured(){
  const favorites=products.filter(p=>p.featured&&(p.idx===0||p.idx===8||p.idx===15)).slice(0,8);
- const picks=[products[0],products[35],products[50],products[75],products[100],products[125],products[47],products[116]];
+ const picks=[products[1],products[27],products[51],products[76],products[101],products[126]];
  $("#featured-grid").innerHTML=picks.map(productCard).join("");
 }
 function save(){
@@ -322,6 +323,7 @@ function navigate(catName){
 function initializeEvents(){
  document.addEventListener("click",e=>{
  const nav=e.target.closest("[data-navcat]");if(nav){e.preventDefault();navigate(nav.dataset.navcat);return}
+ const land=e.target.closest("[data-orig]");if(land){e.preventDefault();onlyFaves=false;cat="Alle";origin=land.dataset.orig;search="";$("#global-search").value="";limit=20;renderCatalog();$("#catalog").scrollIntoView({behavior:"smooth",block:"start"});return}
  const chip=e.target.closest("[data-chip]");if(chip){cat=chip.dataset.chip;limit=20;onlyFaves=false;renderCatalog();return}
  const bund=e.target.closest("[data-bundle]");if(bund){e.preventDefault();bundle(bund.dataset.bundle);return}
  const fav=e.target.closest("[data-fav]");if(fav){e.preventDefault();toggleFav(fav.dataset.fav);return}

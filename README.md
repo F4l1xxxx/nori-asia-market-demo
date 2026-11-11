@@ -1,4 +1,4 @@
-# NORI & CO. — eigenständige Asia-Markt Shop-Demo
+# ASIA MART — eigenständige Asia-Supermarkt Shop-Demo
 
 **Status:** Interaktive Präsentationsfassung, 150 fiktive Artikel, keinerlei echter Verkauf. **Nicht als Live-Shop einsetzen.**
 
@@ -54,7 +54,7 @@ Newsletter-Versand, vollständige rechtliche Seiten.
 - Rechtliche und technische Abnahme vor Livebetrieb.
 
 ## Assets
-Lifestyle-Fotos aus dem kostenlosen Unsplash-Bilddienst als lokale JPEGs.
+Die neue Supermarkt-Regalaufnahme stammt von lee starry / Pexels (https://www.pexels.com/photo/vibrant-asian-supermarket-shelves-with-products-32418799/), laut Pexels mit freier Lizenz. Das Motiv dient nur als gekennzeichnetes Symbolbild, nicht als tatsächliche Filiale. Weitere ältere, in der aktuellen Startseite nicht verwendete Lifestyle-Fotos sind lokal vorhanden.
 Verpackungen, Shopname und Katalog sind eigenständige Illustrationen und Muster,
 keine Darstellungen echter Marken oder konkreter Handelsprodukte.
 

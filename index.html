@@ -1,106 +1,65 @@
 <!doctype html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#17372f">
-  <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="description" content="NORI & CO. – asiatische Spezialitäten, Rezepte und Inspiration. Interaktive Shop-Demonstration mit fiktiven Produkten.">
-  <title>NORI & CO. | Entdecke Asien. Koche mit Gefühl.</title>
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <link rel="stylesheet" href="./styles.css">
-  <script defer src="./app.js"></script>
-</head>
-<body>
-  <div class="announcement"><div class="layout announcement-inner"><span>✦ <strong>DEMO-SHOP</strong> · Alle Produkte und Angaben sind fiktiv</span><span class="top-right">Asien für deine Küche · Mit Liebe kuratiert</span></div></div>
-  <header class="header" id="top">
-    <div class="layout header-main">
-      <a class="logo" href="#top" aria-label="NORI & CO. – Startseite"><span class="logo-mark">n.</span><span class="logo-text">NORI<span>&</span>CO.<small>ASIAN MARKETPLACE</small></span></a>
-      <label class="search-wrap" aria-label="Produkte durchsuchen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg><input id="global-search" type="search" placeholder="Wonach schmeckt dir heute? Reis, Mochi, Ramen ..." autocomplete="off"><kbd>Suche</kbd></label>
-      <div class="header-actions">
-        <button class="icon-btn hide-sm" id="wishlist-button" aria-label="Merkliste anzeigen"><span class="icon-heart">♡</span><span class="action-label">Merkliste</span><span class="mini-badge" id="fav-count">0</span></button>
-        <button class="icon-btn cart-action" id="cart-button" aria-label="Warenkorb öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.8l2-8H6"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg><span class="action-label">Warenkorb</span><span class="mini-badge badge-active" id="cart-count">0</span></button>
-      </div>
-    </div>
-    <nav class="nav-row" aria-label="Produktnavigation"><div class="layout nav-inner">
-      <a href="#catalog" data-navcat="Alle">Alle Produkte</a><a href="#catalog" data-navcat="Reis & Nudeln">Reis & Nudeln</a><a href="#catalog" data-navcat="Saucen & Gewürze">Saucen & Gewürze</a><a href="#catalog" data-navcat="Snacks & Süßes">Snacks & Süßes</a><a href="#catalog" data-navcat="Tiefkühl & Fertiggerichte">Tiefkühl & Fertiggerichte</a><a href="#catalog" data-navcat="Getränke & Tee">Getränke & Tee</a><a href="#inspiration" class="nav-special">Rezepte & Inspiration ↗</a>
-    </div></nav>
-  </header>
-
-  <main>
-    <section class="hero layout" aria-label="Asiatische Geschmackserlebnisse">
-      <div class="hero-content">
-        <div class="hero-eyebrow"><span class="sparkle">✳</span> DEIN MARKTPLATZ FÜR ASIATISCHE GENUSSMOMENTE</div>
-        <h1>Asien beginnt<br>mit einem <em>Bissen.</em></h1>
-        <p>Von duftendem Jasminreis bis zum ersten Schluck Matcha. Entdecke Zutaten, die aus einer Mahlzeit ein Erlebnis machen.</p>
-        <div class="hero-actions"><a class="btn btn-light" href="#catalog">Sortiment entdecken <span>↗</span></a><a class="btn btn-outline-light" href="#inspiration">Inspiration finden ↗</a></div>
-        <div class="hero-lower"><div class="hero-stars">✳ ENTDECKEN · KOCHEN · GENIESSEN<span>Ein Sortiment voller Entdeckungen</span></div><span class="hero-seal">EAT GOOD.<br>FEEL GOOD. ✳</span></div>
-      </div>
-      <div class="hero-visual"><img src="./assets/hero.jpg" alt="Asiatisch inspirierte Bowl mit frischen Zutaten"><div class="hero-image-caption"><span class="micro-tag">DIE ASIATISCHE KÜCHE</span><span>Ein Teller. Tausend Geschichten.</span></div></div>
-    </section>
-
-    <section class="value-strip" aria-label="Shop-Vorteile"><div class="layout values">
-      <div><span class="value-icon">✦</span><span><strong>Neues entdecken</strong><small>Ausgewählte Spezialitäten</small></span></div>
-      <div><span class="value-icon">◈</span><span><strong>Von Rezept zu Zutat</strong><small>Alles für deinen Genussmoment</small></span></div>
-      <div><span class="value-icon">◎</span><span><strong>Bewusst auswählen</strong><small>Zutaten & Allergene auf einen Blick</small></span></div>
-      <div><span class="value-icon">↺</span><span><strong>Einfach wiederfinden</strong><small>Favoriten lokal merken</small></span></div>
-    </div></section>
-
-    <section class="section layout" id="discover">
-      <div class="section-kicker">01 / DEIN NÄCHSTER LIEBLINGSGESCHMACK</div>
-      <div class="section-heading"><div><h2>Worauf hast du <em>Lust?</em></h2><p>Ein guter Einkauf beginnt mit einer Idee. Entdecke unsere Geschmackswelten.</p></div><a class="text-link" href="#catalog">Gesamten Katalog ansehen ↗</a></div>
-      <div class="category-grid" id="category-grid"></div>
-    </section>
-
-    <section class="feature-banner layout" id="inspiration">
-      <div class="feature-photo"><img src="./assets/noodles.jpg" alt="Aromatische Nudel-Bowl mit frischen Zutaten"><span class="recipe-pill">REZEPTIDEE DER WOCHE</span></div>
-      <div class="feature-copy"><span class="section-kicker">MEHR ALS EINKAUFEN</span><h2>Ein gutes Rezept.<br><em>Alles dafür.</em></h2><p>Keine lange Zutatenliste, kein Suchen. Hol dir das passende Set für deine nächste Lieblings-Bowl direkt in den Warenkorb.</p><div class="recipe-stats"><span>◷ 20 Minuten</span><span>♨ Einfach</span><span>♡ Für Genießer</span></div><button class="btn btn-dark" data-bundle="ramen">Ramen-Zutaten als Set entdecken <span>↗</span></button><small>Sets sind unverbindliche Demo-Zusammenstellungen ohne echten Bundle-Rabatt.</small></div>
-    </section>
-
-    <section class="section layout" id="highlights">
-      <div class="section-kicker">02 / KLEINE ENTDECKUNGEN, GROSSE FREUDE</div>
-      <div class="section-heading"><div><h2>Heute einfach mal <em>probieren.</em></h2><p>Ungewöhnlich gut: Entdeckungen, die du nicht gesucht hast – aber vielleicht lieben wirst.</p></div><a class="text-link" href="#catalog">Mehr Lieblingsprodukte ↗</a></div>
-      <div class="products-grid featured-grid" id="featured-grid"></div>
-    </section>
-
-    <section class="editorial-grid layout" aria-label="Empfehlungen und Themen">
-      <article class="editorial-card card-matcha"><div class="editorial-info"><span>DEINE KLEINE AUSZEIT</span><h3>Matcha Moment.</h3><p>Eine kleine Zeremonie im Alltag.</p><button class="pill-button" data-navcat="Getränke & Tee">Jetzt entdecken ↗</button></div><img src="./assets/bowls.jpg" alt="Grüne Bowl als Inspiration für bewussten Genuss"></article>
-      <article class="editorial-card card-pantry"><div class="editorial-info"><span>GUT ZU WISSEN</span><h3>Dein Vorrat.<br>Deine Möglichkeiten.</h3><p>Mit fünf Basics zu hundert Ideen.</p><button class="pill-button" data-navcat="Saucen & Gewürze">Basics shoppen ↗</button></div><img src="./assets/asian.jpg" alt="Asiatisch inspiriertes Gericht mit frischen Zutaten"></article>
-    </section>
-
-    <section class="section layout catalog-section" id="catalog">
-      <div class="section-kicker">03 / DAS GANZE SORTIMENT</div>
-      <div class="section-heading catalog-title"><div><h2>Entdecke deine <em>Favoriten.</em></h2><p>Reis, Saucen, süße Entdeckungen und noch so viel mehr.</p></div><div class="catalog-count" id="catalog-count">Produkte laden …</div></div>
-      <div class="filter-bar"><div class="chip-scroll" id="filter-chips"></div><div class="filter-controls">
-          <label>Herkunft <select id="origin-filter"><option value="Alle">Alle Länder</option></select></label>
-          <label>Sortierung <select id="sort-filter"><option value="popular">Unsere Auswahl</option><option value="price_asc">Preis aufsteigend</option><option value="price_desc">Preis absteigend</option><option value="name">Name A–Z</option></select></label>
-        </div></div>
-      <div id="active-filter-line" class="active-filter-line" aria-live="polite"></div>
-      <div class="products-grid catalog-grid" id="catalog-grid"></div>
-      <div class="load-more-wrap"><button class="btn btn-outline-dark" id="more-button">Mehr Produkte entdecken ↓</button></div>
-    </section>
-
-    <section class="bundle-story layout" aria-label="Rezeptsets"><div><span class="section-kicker">GUT KOMBINIERT</span><h2>Aus Zutaten werden<br><em>Lieblingsgerichte.</em></h2><p>Passende Produkte zusammen finden: praktisch für Käufer, hilfreich für die Produktauswahl. Die Demo zeigt, wie natürliche Zusatzkäufe entstehen können.</p><button class="btn btn-light" data-bundle="sushi">Sushi-Abend zusammenstellen ↗</button></div><div class="bundle-images"><img src="./assets/sushi.jpg" alt="Sushi als Idee für ein gemeinsames Abendessen"><span>HEUTE: SUSHI NIGHT ✳</span></div></section>
-
-    <section class="fulfillment layout" id="shipping" aria-label="Demo Versand und Zahlungsmethoden">
-      <div class="fulfillment-top"><div><span class="section-kicker">04 / DEIN EINKAUF, DEINE ENTSCHEIDUNG</span><h2>Lieferung, die <em>mitdenkt.</em></h2><p>Wähle im Demo-Checkout die passende Versandoption. Preise und Konditionen sind ausschließlich Beispiele.</p></div><span class="fulfillment-mark">VERSAND & BEZAHLUNG · DEMO</span></div>
-      <div class="shipping-tiles">
-        <div class="shipping-tile"><span class="shipping-symbol">↗</span><div><strong>Standardversand</strong><p>4,90 € · Beispielpreis</p><small>Ab 49 € Demo-Warenwert kostenlos</small></div></div>
-        <div class="shipping-tile"><span class="shipping-symbol">✳</span><div><strong>Expressversand</strong><p>9,90 € · Beispielpreis</p><small>Im Checkout frei auswählbar</small></div></div>
-        <div class="shipping-tile"><span class="shipping-symbol">⌂</span><div><strong>Abholung im Markt</strong><p>Kostenlos · Beispieloption</p><small>Kein Standort oder Termin hinterlegt</small></div></div>
-      </div>
-      <div class="payment-row"><span>Zahlungsarten als Vorschau</span><div class="payment-methods"><span>VISA</span><span>Mastercard</span><span>PayPal</span><span>SEPA</span></div><small>Keine Anbieter angebunden. Es werden keine Zahlungsdaten erfasst.</small></div>
-    </section>
-
-    <section class="bottom-story layout"><div><span class="section-kicker">NORI & CO. CLUB</span><h2>Mehr Lust aufs <em>Kochen?</em></h2><p>Hier könnte später ein Rezept-Newsletter entstehen. In dieser Demo werden keine Daten versendet oder gespeichert.</p></div><form id="newsletter-form" class="newsletter-form"><input type="email" placeholder="Deine E-Mail-Adresse" required aria-label="E-Mail-Adresse"><button type="submit">Vormerken ↗</button><small>Demo-Interaktion · kein Newsletterversand</small></form></section>
-  </main>
-
-  <footer class="footer"><div class="layout footer-grid"><div><a class="logo footer-logo" href="#top"><span class="logo-mark">n.</span><span class="logo-text">NORI<span>&</span>CO.<small>ASIAN MARKETPLACE</small></span></a><p>Eine überzeugende Idee für einen modernen Asia-Markt. Eigenständige Design-Demo – kein echter Händler.</p></div><div><strong>Entdecken</strong><a href="#catalog">Sortiment</a><a href="#inspiration">Rezeptideen</a><a href="#discover">Kategorien</a></div><div><strong>Informationen</strong><a href="#shipping">Versand & Bezahlung (Demo)</a><span>Impressum: Platzhalter</span><span>Datenschutz: Platzhalter</span></div><div><strong>Für die Präsentation</strong><span>Keine Live-Bestellungen</span><span>Keine echten Kundendaten</span><span>Produktangaben sind Beispieldaten</span></div></div><div class="layout footer-bottom"><span>© 2026 NORI & CO. – Unverbindliche Shop-Vorschau</span><span>Konzept, Design und Funktionen zu Demonstrationszwecken</span></div></footer>
-
-  <div id="backdrop" class="backdrop" hidden></div>
-  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-label="Warenkorb" aria-hidden="true"><div class="drawer-top"><div><span class="section-kicker">DEIN EINKAUF</span><h2>Warenkorb <span id="cart-title-count">(0)</span></h2></div><button class="close-btn" data-close aria-label="Warenkorb schließen">×</button></div><div id="cart-content" class="cart-content"></div><div class="cart-footer" id="cart-footer"></div></aside>
-  <div class="modal-shell" id="product-modal" role="dialog" aria-modal="true" aria-label="Produktinformationen" aria-hidden="true"><div class="modal-card product-modal-card"><button class="close-btn modal-close" data-close aria-label="Produkt schließen">×</button><div id="product-modal-content"></div></div></div>
-  <div class="modal-shell" id="checkout-modal" role="dialog" aria-modal="true" aria-label="Demo-Checkout" aria-hidden="true"><div class="modal-card checkout-modal-card"><button class="close-btn modal-close" data-close aria-label="Checkout schließen">×</button><div id="checkout-content"></div></div></div>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <div class="demo-ribbon">INTERAKTIVE DEMO <span>·</span> KEIN ECHTER VERKAUF</div>
+<html lang="de"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f4e9"><meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="description" content="ASIA MART — moderne Asia-Supermarkt-Demo mit 150 Beispielartikeln, Angeboten und interaktivem Warenkorb.">
+<title>ASIA MART — Dein Asia-Supermarkt online | Demo</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./market.css">
+<script defer src="./app.js"></script>
+</head><body class="market">
+<div class="demo-top"><span>INTERAKTIVE SHOP-DEMO</span> Alle Preise, Angebote und Produkte sind fiktiv · Kein echter Verkauf</div>
+<div class="service-top"><div class="layout service-top-inner">
+<span>✓ Große Auswahl an asiatischen Spezialitäten</span><span>✓ Gratis-Versand als Demo ab 49 €</span><span>✓ Japan · Korea · Thailand · Vietnam · China</span>
+</div></div>
+<header class="header shop-header" id="top">
+<div class="layout header-main">
+<a class="market-logo" href="#top" aria-label="Asia Mart – Startseite"><span class="market-logo-star">✳</span><span class="market-logo-name">ASIA<span>MART.</span><small>DEIN ASIA-SUPERMARKT</small></span></a>
+<div class="search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg><input id="global-search" type="search" placeholder="Produkte suchen: Ramen, Reis, Mochi, Sriracha ..." autocomplete="off" aria-label="Produkte durchsuchen"><kbd>150 Artikel</kbd></div>
+<div class="header-actions"><button id="wishlist-button" class="icon-btn" aria-label="Merkliste"><span class="icon-heart">♡</span><span class="action-label">Merkliste</span><span class="mini-badge" id="fav-count">0</span></button><button id="cart-button" class="icon-btn cart-action" aria-label="Warenkorb öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.8l2-8H6"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg><span class="action-label">Warenkorb</span><span id="cart-count" class="mini-badge badge-active">0</span></button></div>
+</div>
+<nav class="nav-row store-nav" aria-label="Shopnavigation"><div class="layout nav-inner">
+<a class="nav-all" href="#catalog" data-navcat="Alle">☰ &nbsp; Alle Produkte</a><a href="#deals">🔥 Angebote</a><a href="#categories">Kategorien</a><a href="#catalog" data-navcat="Reis & Nudeln">Reis & Nudeln</a><a href="#catalog" data-navcat="Saucen & Gewürze">Saucen</a><a href="#catalog" data-navcat="Snacks & Süßes">Snacks & Süßes</a><a href="#catalog" data-navcat="Getränke & Tee">Getränke</a><a href="#worlds">Länderwelten</a><a href="#shipping" class="nav-ship">Lieferung & Zahlung</a>
+</div></nav></header>
+<main>
+<section class="market-hero layout" aria-label="Dein Asia-Supermarkt">
+<div class="market-hero-main">
+<div class="hero-words"><span class="retail-eyebrow">ASIA-MARKT FÜR DEINE KÜCHE</span><h1>Ganz Asien.<br><em>Ein Einkauf.</em></h1><p>Ramen, Reis, Saucen, Mochi & mehr: Entdecke die Vielfalt eines Asia-Supermarkts, ganz bequem online.</p><div class="hero-cta-row"><a href="#catalog" class="market-button">Jetzt Sortiment shoppen <span>↗</span></a><a href="#deals" class="hero-text-link">Angebote ansehen ↗</a></div><div class="hero-badges"><span><b>150</b> Demoartikel</span><span>✦ 6 Warengruppen</span><span>✦ 9 Herkunftsländer</span></div></div>
+<div class="hero-grocery-visual" aria-hidden="true">
+<div class="hero-price-sticker"><b>SHOP THE<br> ASIAN WAY</b><small>100 % ENTDECKEN</small></div>
+<div class="hero-product hp-rice"><small>RICEHOUSE</small><span>PREMIUM<br>JASMINE<br>RICE</span><b>🍚</b><i>1 KG</i></div>
+<div class="hero-product hp-ramen"><small>ASIA MART SELECT</small><span>SPICY<br>RAMEN</span><b>🍜</b><i>HOT & TASTY</i></div>
+<div class="hero-product hp-snack"><small>KOMORI</small><span>MOCHI<br>MANGO</span><b>🥭</b><i>SOFT & SWEET</i></div>
+<div class="hero-product hp-sauce"><small>ASIA MART</small><span>CHILI<br>SAUCE</span><b>🌶️</b><i>250 ML</i></div>
+<div class="hero-floor"></div>
+</div></div>
+<div class="market-side-promos"><a href="#catalog" data-navcat="Snacks & Süßes" class="side-promo side-red"><span class="promo-overline">SÜSSES AUS ASIEN</span><strong>Snack-Attack!</strong><span>Mochi, Cracker, Süßes</span><b>Jetzt entdecken ↗</b><span class="promo-glyph">🍡</span></a><a href="#catalog" data-navcat="Getränke & Tee" class="side-promo side-yellow"><span class="promo-overline">TREND-GETRÄNKE</span><strong>Matcha & more.</strong><span>Tee, Drinks und Limonaden</span><b>Sortiment ansehen ↗</b><span class="promo-glyph">🍵</span></a></div>
+</section>
+<div class="retail-benefits"><div class="layout benefits-flex"><span>🚚 <b>Gratis-Versand*</b> ab 49 € Demo-Warenwert</span><span>🛒 <b>Große Auswahl</b> von süß bis scharf</span><span>🌏 <b>Asia-Vielfalt</b> aus vielen Ländern</span><span>🔒 <b>Sicherer Demo-Modus</b> ohne Zahlung</span></div></div>
+<section class="shop-section layout" id="categories"><div class="section-heading retail-heading"><div><div class="retail-label">ALLES AUF EINEN BLICK</div><h2>Shoppe nach <em>Kategorie</em></h2><p>Finde deine Lieblingsprodukte genau da, wo du sie erwartest.</p></div><a href="#catalog" class="shop-all-link">Alle 150 Produkte ↗</a></div><div id="category-grid" class="category-grid"></div></section>
+<section class="layout retail-photo-banner" aria-label="Asiatische Produktvielfalt im Markt">
+  <div class="retail-photo-banner-img"><img src="./assets/asia-market-shelves.jpg" loading="lazy" alt="Bunte Verpackungen und Lebensmittel in den Regalen eines asiatischen Supermarkts"><span>Symbolbild · unabhängiger Asia-Markt</span></div>
+  <div class="retail-photo-banner-copy"><span class="retail-label">WIE EIN BUMMEL DURCH DEN ASIA-MARKT</span><h2>Regal für Regal.<br><em>Neues entdecken.</em></h2><p>Von den Basics für jeden Tag bis zu Snacks, die du noch nie probiert hast. Genau dafür gibt es den Asia-Markt – und jetzt den Online-Einkauf.</p><a href="#catalog" class="market-button">Zum Online-Sortiment ↗</a></div>
+</section>
+<section class="shop-section deals-section layout" id="deals">
+<div class="section-heading retail-heading"><div><div class="retail-label">DEALS & ENTDECKUNGEN · SIMULIERTE AKTIONEN</div><h2>Diese Woche <em>im Fokus.</em></h2><p>Beliebte Artikel und wechselnde Produkttipps – direkt in den Warenkorb.</p></div><a href="#catalog" class="shop-all-link">Alle Produkte ↗</a></div>
+<div class="deals-layout"><div class="deal-banner"><span class="deal-banner-kicker">DEMO-VORTEIL</span><strong>Dein Vorrat.<br>Dein Deal.</strong><p>Entdecke ausgewählte Artikel und probiere unseren Beispiel-Aktionscode an der Kasse.</p><b>WILLKOMMEN5</b><a href="#catalog" class="deal-banner-link">Jetzt stöbern ↗</a></div><div class="products-grid featured-grid" id="featured-grid"></div></div>
+</section>
+<section class="shop-section layout" id="worlds"><div class="section-heading retail-heading"><div><div class="retail-label">SHOP THE WORLD</div><h2>Asia-Stars nach <em>Land.</em></h2><p>Entdecke Produkte aus deinen Lieblingsküchen.</p></div></div>
+<div class="country-grid"><button class="country-card country-japan" data-orig="Japan"><span class="country-sign">JP</span><strong>Japan</strong><small>Ramen, Matcha, Sushi & mehr</small><b>Entdecken ↗</b></button><button class="country-card country-korea" data-orig="Südkorea"><span class="country-sign">KR</span><strong>Südkorea</strong><small>Scharfe Nudeln, Snacks, Tee</small><b>Entdecken ↗</b></button><button class="country-card country-thai" data-orig="Thailand"><span class="country-sign">TH</span><strong>Thailand</strong><small>Currys, Reis & Kokos</small><b>Entdecken ↗</b></button><button class="country-card country-vietnam" data-orig="Vietnam"><span class="country-sign">VN</span><strong>Vietnam</strong><small>Pho, Reispapier & mehr</small><b>Entdecken ↗</b></button></div>
+</section>
+<section class="shop-section layout catalog-section" id="catalog"><div class="section-heading retail-heading catalog-title"><div><div class="retail-label">UNSER SORTIMENT · SOFORT DURCHSUCHBAR</div><h2>Stöbere durch <em>150 Produkte.</em></h2><p>Entdecken, vergleichen, merken und sofort in den Demo-Warenkorb legen.</p></div><div class="catalog-count" id="catalog-count">150 Produkte</div></div>
+<div class="filter-bar"><div id="filter-chips" class="chip-scroll"></div><div class="filter-controls"><label>Herkunft <select id="origin-filter"><option value="Alle">Alle Länder</option></select></label><label>Sortierung <select id="sort-filter"><option value="popular">Empfohlen</option><option value="price_asc">Preis aufsteigend</option><option value="price_desc">Preis absteigend</option><option value="name">Name A–Z</option></select></label></div></div>
+<div id="active-filter-line" class="active-filter-line" aria-live="polite"></div><div class="products-grid catalog-grid" id="catalog-grid"></div><div class="load-more-wrap"><button id="more-button" class="btn btn-outline-dark">Mehr Produkte laden ↓</button></div>
+</section>
+<section class="shop-section layout" id="quick-shop"><div class="quick-shop-banner"><div><span class="retail-label">CLEVER KOMBINIEREN</span><h2>Alles für den<br><em>Sushi-Abend.</em></h2><p>Reis, Nori und passende Saucen mit einem Klick gemeinsam in den Warenkorb – ohne umständliche Suche.</p><button class="market-button" data-bundle="sushi">Sushi-Einkauf zusammenstellen ↗</button></div><div class="quick-goods" aria-hidden="true"><span class="qg1">🍙</span><span class="qg2">🥢</span><span class="qg3">🍚</span><span class="qg4">🌿</span></div></div></section>
+<section class="shop-section fulfillment layout" id="shipping"><div class="section-heading retail-heading"><div><div class="retail-label">EINFACH, TRANSPARENT, FLEXIBEL</div><h2>Versand & <em>Bezahlung.</em></h2><p>Beispieloptionen für den künftigen Onlineshop. Noch keine echte Zahlungsabwicklung.</p></div></div><div class="shipping-tiles"><div class="shipping-tile"><span class="shipping-symbol">↗</span><div><strong>Standardversand</strong><p>4,90 € · Demo-Preis</p><small>Demo: ab 49 € kostenlos</small></div></div><div class="shipping-tile"><span class="shipping-symbol">✳</span><div><strong>Expressversand</strong><p>9,90 € · Demo-Preis</p><small>In der Kasse auswählbar</small></div></div><div class="shipping-tile"><span class="shipping-symbol">⌂</span><div><strong>Abholung</strong><p>Kostenfrei · Demo-Preis</p><small>Kein realer Standort hinterlegt</small></div></div></div><div class="payment-row"><span>Zahlungsarten (Vorschau)</span><div class="payment-methods"><span>VISA</span><span>Mastercard</span><span>PayPal</span><span>SEPA</span></div><small>Keine Zahlungen und keine Bestellungen möglich.</small></div></section>
+<section class="signup-section layout"><div><span class="retail-label">MEHR ENTDECKEN</span><h2>Keine Neuheit verpassen.</h2><p>Der künftige Asia-Markt könnte hier Neuheiten, Aktionen und Einkaufsideen teilen. Aktuell wird nichts versendet.</p></div><form id="newsletter-form" class="newsletter-form"><input type="email" aria-label="E-Mail-Adresse" placeholder="E-Mail-Adresse" required><button type="submit">Vormerken ↗</button><small>Nur Demo, keine Registrierung und kein E-Mail-Versand</small></form></section>
+</main>
+<footer class="footer market-footer"><div class="layout footer-grid"><div><a class="market-logo footer-mark" href="#top"><span class="market-logo-star">✳</span><span class="market-logo-name">ASIA<span>MART.</span><small>DEIN ASIA-SUPERMARKT</small></span></a><p>Moderne, eigenständige Vorschau für den Online-Auftritt eines Asia-Supermarkts.</p></div><div><strong>Sortiment</strong><a href="#catalog">Alle Artikel</a><a href="#deals">Angebote</a><a href="#categories">Kategorien</a><a href="#worlds">Länderwelten</a></div><div><strong>Service</strong><a href="#shipping">Versand & Zahlung</a><span>Hilfe & Kontakt: Demo</span><span>Impressum: Platzhalter</span><span>Datenschutz: Platzhalter</span></div><div><strong>Wichtiger Hinweis</strong><span>Fiktiver Händler und Produkte</span><span>Fiktive Preise und Nährwerte</span><span>Kein echter Versand oder Verkauf</span></div></div><div class="layout footer-bottom"><span>© 2026 ASIA MART — interaktive Shop-Demo</span><span>Alle Angaben dienen ausschließlich der Präsentation.</span></div></footer>
+<div id="backdrop" class="backdrop" hidden></div>
+<aside id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-label="Warenkorb" aria-hidden="true"><div class="drawer-top"><div><span class="section-kicker">DEIN EINKAUF</span><h2>Warenkorb <span id="cart-title-count">(0)</span></h2></div><button class="close-btn" data-close aria-label="Warenkorb schließen">×</button></div><div id="cart-content" class="cart-content"></div><div id="cart-footer" class="cart-footer"></div></aside>
+<div id="product-modal" class="modal-shell" role="dialog" aria-modal="true" aria-label="Produktinformationen" aria-hidden="true"><div class="modal-card product-modal-card"><button class="close-btn modal-close" data-close aria-label="Produkt schließen">×</button><div id="product-modal-content"></div></div></div>
+<div id="checkout-modal" class="modal-shell" role="dialog" aria-modal="true" aria-label="Demo-Checkout" aria-hidden="true"><div class="modal-card checkout-modal-card"><button class="close-btn modal-close" data-close aria-label="Checkout schließen">×</button><div id="checkout-content"></div></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div><div class="demo-ribbon">INTERAKTIVE DEMO · KEIN ECHTER VERKAUF</div>
 </body></html>
