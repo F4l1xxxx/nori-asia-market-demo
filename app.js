@@ -157,17 +157,49 @@ function initCategories(){
  const brands=[...new Set(products.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b,"de"));
  $("#brand-filter").innerHTML='<option value="Alle">Alle Marken</option>'+brands.map(b=>'<option value="'+safe(b)+'">'+safe(b)+'</option>').join("");
 }
+/* Search product-specific data, not broad mixed categories.
+   "Nudeln" must not surface rice solely because the category says "Reis & Nudeln". */
+const normalizeSearch=value=>String(value).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de").trim();
+function searchTokenMatch(p,token){
+ const name=normalizeSearch(p.name);
+ const brandName=normalizeSearch(p.brand);
+ const country=normalizeSearch(p.origin);
+ if(name.includes(token))return 100;
+ if(brandName.includes(token))return 70;
+ if(country.includes(token))return 60;
+ // Selected common names describe the product, never an entire mixed category.
+ if(["nudeln","nudel","noodles","noodle"].includes(token) && /ramen|udon|soba|vermicelli|pho|bun |mi goreng|wok noodles|mie|glasnudel|reisnudel|eiernudel/i.test(normalizeSearch(p.name)))return 75;
+ if(["saucen","sauce","soßen","sosse","soßen"].includes(token) && /sauce|sojaso|tamari|teriyaki|hoisin|sriracha|fischsauce|austernsauce/i.test(name))return 75;
+ if(["snacks","snack"].includes(token) && p.category==="Snacks & Süßes")return 55;
+ if(["getranke","getrank","drinks","drink"].includes(token) && p.category==="Getränke & Tee")return 55;
+ if(["tiefkuhl","tiefkuehl","tk"].includes(token) && p.category==="Tiefkühl & Fertiggerichte")return 55;
+ if(["konserven","konserve"].includes(token) && p.category==="Basics & Konserven")return 55;
+ return 0;
+}
+function searchScore(p,query){
+ const normalized=normalizeSearch(query);
+ if(!normalized)return 1;
+ // An explicit complete category name is meaningful, unlike a single fragment.
+ if(normalizeSearch(p.category)===normalized)return 40;
+ const tokens=normalized.split(/\s+/).filter(t=>t&&t!=="&"&&t!=="und");
+ if(!tokens.length)return 0;
+ const scores=tokens.map(t=>searchTokenMatch(p,t));
+ return scores.every(s=>s>0)?scores.reduce((a,b)=>a+b,0):0;
+}
+function rankedSearchProducts(query,items=products){
+ return items.map((p,i)=>({p,i,score:searchScore(p,query)})).filter(x=>x.score>0)
+   .sort((a,b)=>b.score-a.score||a.i-b.i).map(x=>x.p);
+}
 function listProducts(){
  let items=onlyFaves?products.filter(p=>favorites.includes(p.id)):products.slice();
  if(cat!=="Alle")items=items.filter(p=>p.category===cat);
  if(origin!=="Alle")items=items.filter(p=>p.origin===origin);
  if(brand!=="Alle")items=items.filter(p=>p.brand===brand);
- const q=search.trim().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de");
- if(q)items=items.filter(p=>(p.name+" "+p.category+" "+p.origin+" "+p.brand).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de").includes(q));
+ if(search.trim())items=rankedSearchProducts(search,items);
  if(sort==="price_asc")items.sort((a,b)=>a.price-b.price);
  if(sort==="price_desc")items.sort((a,b)=>b.price-a.price);
  if(sort==="name")items.sort((a,b)=>a.name.localeCompare(b.name,"de"));
- if(sort==="popular")items.sort((a,b)=>(b.featured?1:0)-(a.featured?1:0)||a.ci-b.ci||a.idx-b.idx);
+ if(sort==="popular"&&!search.trim())items.sort((a,b)=>(b.featured?1:0)-(a.featured?1:0)||a.ci-b.ci||a.idx-b.idx);
  return items;
 }
 function renderCatalog(){
@@ -332,9 +364,8 @@ function navigate(catName){
 /* Mobile-stable search: never mutate the document height while typing.
    Results appear in an overlay; only a deliberate tap opens the filtered catalog. */
 function matchingSearchProducts(query){
- const normalized=query.trim().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de");
- if(!normalized)return [];
- return products.filter(p=>(p.name+" "+p.category+" "+p.origin+" "+p.brand).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("de").includes(normalized));
+ if(!query.trim())return [];
+ return rankedSearchProducts(query);
 }
 function closeSearchSuggestions(){
  const list=$("#search-suggestions"),input=$("#global-search");
