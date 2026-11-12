@@ -28,3 +28,8 @@ Doppelklick auf \`START_PREVIEW.bat\` oder \`index.html\`. Alle Seiten verwenden
 Kundenindividuelle Impressums-, Datenschutz-, Liefer- und Produktpflichtangaben werden nach Freigabe ergänzt. Die bereits öffentlich gehostete Demo kann **eigene Betreiberpflichten** haben; das muss unabhängig davon geprüft werden.
 
 Projektdaten und Tests sind ausschließlich im Ordner \`AsiaMarkt_Shop_Demo_2026-11-04\` abgelegt. Andere Projekte sind unberührt.
+
+## Ergänzung aus sieben Wettbewerbern (12.11.2026)
+Neu: Unterkategorien mit direkt teilbaren Filter-URLs, sechs Startseiten-Einstiege, drei einzeln auswählbare Einkaufslisten mit dynamischen Summen und eine separate Frische-/Tiefkühl-Konzeptseite. Produktseiten zeigen Lager-/Transporthinweise. Alles bleibt fiktiv und ohne echte Bestellverarbeitung.
+
+Siehe research/7-Shops-Vergleich_2026-11-12.md. In der lokalen QA ist extensions-qa.cjs enthalten.

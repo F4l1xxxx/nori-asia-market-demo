@@ -65,6 +65,7 @@ function productView(p){
  '<div class="pdp-grid"><div class="pdp-visual-block">'+detailPack(p)+'<div class="pdp-visual-legend"><span>Eigene Verpackungsillustration</span><span>Originalfoto folgt nach Händlerfreigabe</span></div></div>'+
  '<div class="pdp-data">'+demoNote+'<div class="pdp-brand">'+esc(p.brand)+' · '+esc(p.origin)+'</div><h1>'+esc(p.name)+'</h1><p class="pdp-description">'+esc(p.description)+'</p>'+
  '<div class="pdp-tags"><span>'+esc(p.size)+'</span><span>Artikel-Nr. DEMO-'+esc(p.id.toUpperCase())+'</span><span>'+esc(p.category)+'</span></div>'+
+ '<div class="pdp-shipping-tag'+(p.category==="Tiefkühl & Fertiggerichte"?" cold":"")+'">'+(p.category==="Tiefkühl & Fertiggerichte"?"❄️ ":"📦 ")+esc(window.ASIA_SHOP_FEATURES.storageOf(p))+'</div>'+
  '<div class="pdp-buy"><span class="pdp-price">'+eur(p.price)+'</span><span class="pdp-unit">'+esc(p.unitPrice)+' · Beispielpreis inkl. MwSt.</span>'+
  '<p class="pdp-stock"><i class="'+(p.demoStock===0?'out':'')+'"></i>'+(p.demoStock===0?'Demo-Bestand: nicht verfügbar':'Demo-Bestand: '+p.demoStock+' Stück')+'</p>'+
  '<div class="pdp-buyrow"><label>Menge <input type="number" id="pdp-qty" min="1" max="'+Math.max(p.demoStock,1)+'" value="1" inputmode="numeric"></label><button type="button" class="market-button" id="pdp-add" data-pdp-add="'+p.id+'" '+(p.demoStock===0?'disabled':'')+'>In den Warenkorb <span>↗</span></button></div>'+
@@ -82,7 +83,7 @@ function productView(p){
  '</table><p class="pdp-smallnote">'+note+'</p><a class="service-link-card" href="'+pageUrl("versand")+'"><span>🚚</span><span><strong>Versand & Lieferung</strong><small>Beispieloptionen und Antworten ansehen</small></span><b>↗</b></a></div></div>'+
  '<div class="route-heading"><div><span class="retail-label">PASST GUT DAZU</span><h2>Das ergänzt deinen Einkauf</h2><p>Bewusst ausgewählte, zum Artikel passende Zutaten oder Snacks. Alles freiwillig und einzeln bepreist.</p></div><a href="'+catUrl(p.category)+'">Alle '+esc(p.category)+' ↗</a></div><div class="shop-tile-grid">'+similar.map(productTile).join("")+'</div></div>';
 }
-let listing={category:catParam||"Alle",country:countryParam||"Alle",text:queryParam||"",brands:new Set(),priceCap:"Alle",sort:"recommended",visible:24};
+let listing={category:catParam||"Alle",country:countryParam||"Alle",text:queryParam||"",subtype:q.get("typ")||"Alle",brands:new Set(),priceCap:"Alle",sort:"recommended",visible:24};
 function setRouteContent(html,title){homepage.hidden=true;routeRoot.hidden=false;routeRoot.innerHTML=html;document.title=title+" | ASIA MART Demo";window.scrollTo(0,0);}
 function listingBase(){
  const uniqueBrands=[...new Set(items.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b,"de"));
@@ -96,11 +97,15 @@ function listingBase(){
  const check=(type,name)=>'<label class="listing-check"><input type="checkbox" data-facet="'+type+'" value="'+esc(name)+'" '+(type==="brand"&&listing.brands.has(name)?'checked':'')+'><span>'+esc(name)+'</span></label>';
  const brands=uniqueBrands.map(x=>check("brand",x)).join("");
  const countries=uniqueCountries.map(x=>'<option value="'+esc(x)+'"'+(listing.country===x?' selected':'')+'>'+esc(x)+'</option>').join("");
+ const subgroups=listing.category==="Alle"?[]:window.ASIA_SHOP_FEATURES.groupsFor(listing.category);
+ const suboptions='<option value="Alle">Alle Unterkategorien</option>'+subgroups.map(g=>'<option value="'+esc(g.name)+'"'+(listing.subtype===g.name?' selected':'')+'>'+esc(g.name)+' ('+g.count+')</option>').join("");
+ const subtypePills=listing.category==="Alle"?"":'<div class="listing-subtype-pills"><a class="'+(listing.subtype==="Alle"?"selected":"")+'" href="?kategorie='+encodeURIComponent(listing.category)+'">Alles</a>'+subgroups.map(g=>'<a class="'+(listing.subtype===g.name?"selected":"")+'" href="?kategorie='+encodeURIComponent(listing.category)+'&typ='+encodeURIComponent(g.name)+'">'+esc(g.name)+' · '+g.count+'</a>').join("")+'</div>';
  return '<div class="layout route-inner">'+breadcrumbs([{name:"Sortiment"}])+
  '<div class="listing-header">'+demoNote+'<h1>'+esc(categoryName)+'</h1><p>150 Produkte im Demo-Katalog. Wähle Marken, Herkunft und Preise – alle Angaben sind Muster.</p></div>'+
  '<div class="listing-toolbar"><button id="open-mobile-filters" class="filter-toggle">☷ Filter & Sortierung</button><div id="listing-result-info" aria-live="polite"></div><label>Sortieren <select id="listing-sort"><option value="recommended">Unsere Auswahl</option><option value="price-low">Preis aufsteigend</option><option value="price-high">Preis absteigend</option><option value="name">Name A–Z</option></select></label></div>'+
- chips+'<div class="listing-layout"><aside id="listing-filters" class="listing-filters" aria-label="Produktfilter"><div class="listing-filter-heading"><strong>Produkte filtern</strong><button id="close-mobile-filters" aria-label="Filter schließen">×</button></div>'+
+ chips+subtypePills+'<div class="listing-layout"><aside id="listing-filters" class="listing-filters" aria-label="Produktfilter"><div class="listing-filter-heading"><strong>Produkte filtern</strong><button id="close-mobile-filters" aria-label="Filter schließen">×</button></div>'+
  '<fieldset><legend>Warengruppe</legend><select id="listing-category"><option value="Alle">Alle Kategorien</option>'+[...new Set(items.map(p=>p.category))].map(x=>'<option value="'+esc(x)+'"'+(listing.category===x?' selected':'')+'>'+esc(x)+'</option>').join("")+'</select></fieldset>'+
+ '<fieldset><legend>Unterkategorie</legend><select id="listing-subtype" '+(listing.category==="Alle"?"disabled":"")+'>'+suboptions+'</select></fieldset>'+
  '<fieldset><legend>Marken</legend>'+brands+'</fieldset>'+
  '<fieldset><legend>Herkunft</legend><select id="listing-country"><option value="Alle">Alle Länder</option>'+countries+'</select></fieldset>'+
  '<fieldset><legend>Preisbereich</legend><select id="listing-max"><option value="Alle">Jeder Preis</option><option value="3">Bis 3 €</option><option value="5">Bis 5 €</option><option value="10">Bis 10 €</option><option value="20">Bis 20 €</option></select></fieldset>'+
@@ -109,6 +114,7 @@ function listingBase(){
 }
 function filteredList(){
  let all=items.filter(p=>(listing.category==="Alle"||p.category===listing.category)&&(listing.country==="Alle"||p.origin===listing.country)&&(!listing.brands.size||listing.brands.has(p.brand)));
+ if(listing.subtype!=="Alle")all=all.filter(p=>window.ASIA_SHOP_FEATURES.subtypeOf(p)===listing.subtype);
  if(listing.text.trim()){
   const found=new Set(api.searchResults(listing.text).map(p=>p.id));
   all=all.filter(p=>found.has(p.id));
@@ -236,7 +242,7 @@ document.addEventListener("click",e=>{
  if(e.target.closest("#admin-reset")){if(confirm("Nur die lokal gespeicherten Demo-Änderungen zurücksetzen?")){adminData={products:{},orderStatus:{}};saveAdmin();location.reload()}return}
  const lm=e.target.closest("#listing-more");if(lm){listing.visible+=24;renderListing();return}
  const reset=e.target.closest("#listing-reset")||e.target.closest("#listing-nohits-reset");
- if(reset){listing={category:"Alle",country:"Alle",text:"",brands:new Set(),priceCap:"Alle",sort:"recommended",visible:24};openListing();return}
+ if(reset){listing={category:"Alle",country:"Alle",text:"",subtype:"Alle",brands:new Set(),priceCap:"Alle",sort:"recommended",visible:24};openListing();return}
  const remove=e.target.closest("[data-remove-brand]");if(remove){listing.brands.delete(remove.dataset.removeBrand);renderListing();$("#listing-filters").querySelectorAll('[data-facet=brand]').forEach(i=>{i.checked=listing.brands.has(i.value)});return}
  const clear=e.target.closest("[data-filter-clear]");if(clear){listing[clear.dataset.filterClear==="text"?"text":clear.dataset.filterClear]="Alle";if(clear.dataset.filterClear==="text")listing.text="";openListing();return}
  if(e.target.closest("[data-clear-price]")){listing.priceCap="Alle";$("#listing-max").value="Alle";renderListing();return}
@@ -246,7 +252,8 @@ document.addEventListener("click",e=>{
 document.addEventListener("change",e=>{
  const element=e.target;
  if(element.matches('[data-facet="brand"]')){if(element.checked)listing.brands.add(element.value);else listing.brands.delete(element.value);listing.visible=24;renderListing()}
- if(element.id==="listing-category"){listing.category=element.value;listing.visible=24;renderListing()}
+ if(element.id==="listing-category"){listing.category=element.value;listing.subtype="Alle";listing.visible=24;openListing()}
+ if(element.id==="listing-subtype"){listing.subtype=element.value;listing.visible=24;renderListing()}
  if(element.id==="listing-country"){listing.country=element.value;listing.visible=24;renderListing()}
  if(element.id==="listing-max"){listing.priceCap=element.value;listing.visible=24;renderListing()}
  if(element.id==="listing-sort"){listing.sort=element.value;listing.visible=24;renderListing()}

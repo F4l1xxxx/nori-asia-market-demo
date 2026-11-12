@@ -61,3 +61,8 @@ Eine frei erreichbare, für geschäftliche Akquise genutzte Demo kann eigenstän
 ## Methodik / Referenzen
 - Go Asia, NikanKitchen und andere Asia-Supermarkt-Shops: Nutzerführung, Produktkategorien, Produktlisten, Inspiration. Eigenständige Umsetzung ohne Designkopie.
 - Baymard Institute: Product Listing UX, Filter-/Sortierungsklarheit, Guest Checkout und Produktdetail-Usability.
+
+## Ergänzung aus sieben Wettbewerbern (12.11.2026)
+Neu: Unterkategorien mit direkt teilbaren Filter-URLs, sechs Startseiten-Einstiege, drei einzeln auswählbare Einkaufslisten mit dynamischen Summen und eine separate Frische-/Tiefkühl-Konzeptseite. Produktseiten zeigen Lager-/Transporthinweise. Alles bleibt fiktiv und ohne echte Bestellverarbeitung.
+
+Siehe research/7-Shops-Vergleich_2026-11-12.md. In der lokalen QA ist extensions-qa.cjs enthalten.

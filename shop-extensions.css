@@ -1,0 +1,92 @@
+/* ASIA MART original competitor-inspired aisle navigation and guided shopping */
+.discovery-shortcuts{padding-top:48px;padding-bottom:25px}
+.discovery-shortcuts .section-heading{margin-bottom:19px!important}
+.discovery-shortcut-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.discovery-chip{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;padding:20px 10px 17px;border-radius:12px;border:1px solid #e1e6de;background:#fff;transition:transform .2s,box-shadow .2s;min-width:0}
+.discovery-chip:hover,.discovery-chip:focus-visible{box-shadow:0 9px 21px #1c312320;transform:translateY(-3px)}
+.discovery-chip>span{font-size:40px;filter:drop-shadow(0 4px 4px #2b3d2520)}
+.discovery-chip strong{font:900 12px/1.3 system-ui;color:#304034}
+.discovery-chip small{font-size:10px;color:#7f8d81}
+.discovery-worlds{margin-top:32px;margin-bottom:20px;display:grid;grid-template-columns:1.2fr .8fr;min-height:280px;background:#e7eddb;border-radius:14px;overflow:hidden}
+.discovery-world-copy{padding:33px 45px;display:flex;align-items:start;justify-content:center;flex-direction:column}
+.discovery-world-copy h2{font:1000 34px/1.18 system-ui;letter-spacing:-.06em;margin:13px 0 10px}
+.discovery-world-copy h2 em{color:#c5412d;font-style:normal}
+.discovery-world-copy p{max-width:500px;color:#637665;font-size:12px;line-height:1.85;margin:0 0 20px}
+.discovery-world-icons{display:flex;align-items:center;justify-content:center;gap:7px;background:#d4e4c8}
+.discovery-world-icons span{font-size:86px;filter:drop-shadow(5px 13px 8px #28412822);transform:rotate(-11deg)}
+.discovery-world-icons span:nth-child(2){transform:translateY(18px) rotate(6deg)}
+.discovery-world-icons span:nth-child(3){transform:rotate(16deg)}
+.listing-subtype-field{margin-bottom:0!important}
+.listing-subtype-pills{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0 22px}
+.listing-subtype-pills a{background:#fff;border:1px solid #dce7d9;color:#405949;border-radius:8px;font-size:11px;font-weight:800;padding:10px 13px}
+.listing-subtype-pills a:hover,.listing-subtype-pills a.selected{background:#315b41;color:#fff;border-color:#315b41}
+.pdp-shipping-tag{display:flex;align-items:center;gap:10px;background:#f0f4e9;padding:11px 13px;border-radius:8px;color:#426649;font-size:12px;font-weight:800;line-height:1.5;margin:16px 0}
+.pdp-shipping-tag.cold{background:#e8f2f7;color:#316276}
+.idea-top{margin:14px 0 45px}
+.idea-top h1{font:1000 clamp(33px,4.4vw,54px)/1.14 system-ui;letter-spacing:-.07em;margin:15px 0}
+.idea-top p{max-width:850px;font-size:13px;line-height:1.8;color:#65766b}
+.idea-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.idea-card{background:#fff;border:1px solid #e3e9df;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.idea-head{min-height:175px;padding:23px 22px;display:flex;gap:15px;align-items:start;background:#ddeedc}
+.idea-color-1{background:#f2e7c9}.idea-color-2{background:#e8d8cf}
+.idea-head>span{font-size:62px;filter:drop-shadow(5px 7px 6px #0002)}
+.idea-head small{font-size:10px;color:#916448;letter-spacing:.1em;font-weight:900}
+.idea-head h2{font:1000 23px/1.2 system-ui;letter-spacing:-.055em;margin:8px 0}
+.idea-head p{font-size:11px;line-height:1.7;color:#617365;margin:0}
+.idea-content{padding:20px;display:flex;flex-direction:column;flex:1}
+.idea-content h3{font-size:13px;font-weight:900;margin:0 0 13px}
+.idea-selection{border-top:1px solid #e9eee7}
+.idea-line{display:grid;grid-template-columns:20px 35px minmax(0,1fr) auto;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #eef1ec;position:relative}
+.idea-line input{accent-color:#d84630;width:17px;height:17px}
+.idea-line-icon{font-size:25px}
+.idea-line-detail{min-width:0}
+.idea-line-detail strong{display:block;font:800 11px/1.3 system-ui;color:#2c4035}
+.idea-line-detail small{display:block;font-size:9px;color:#89988b;margin-top:5px}
+.idea-line b{font-size:11px;white-space:nowrap;color:#c43c2d}
+.idea-line>a{grid-column:3/5;font-size:10px;color:#436c52;font-weight:800;text-decoration:underline;text-underline-offset:3px;justify-self:end}
+.idea-total{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:16px 0;margin-top:auto}
+.idea-total span{font-size:11px;color:#627565}
+.idea-total strong{font:900 15px system-ui;color:#263a30;white-space:nowrap}
+.idea-content>.market-button{justify-content:center;font-size:11px;padding:12px;min-height:45px}
+.idea-disclaimer{font-size:10px;color:#7c8b7d;margin:13px 0;line-height:1.6}
+.idea-steps{border-top:1px solid #edf1ec;padding-top:14px;margin-top:auto}
+.idea-steps summary{font-size:11px;font-weight:900;color:#436049;cursor:pointer}
+.idea-steps ol{padding-left:19px;font-size:11px;line-height:1.9;color:#647465}
+.ideas-closer{margin:50px 0 0;padding:40px;border-radius:12px;background:#e9efe2}
+.ideas-closer h2{font:900 27px system-ui}
+.ideas-closer p{font-size:12px;line-height:1.8;color:#627661;margin-bottom:20px}
+.freshness-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.freshness-grid article{background:#fff;padding:26px;border:1px solid #e6ece2;border-radius:14px;display:flex;flex-direction:column;align-items:flex-start}
+.freshness-grid article>span{font-size:40px}
+.freshness-grid h2{font:900 20px system-ui;letter-spacing:-.05em;margin:14px 0}
+.freshness-grid p{color:#617165;font-size:12px;line-height:1.9}
+.freshness-grid a,.freshness-grid small{color:#386349;font-size:11px;font-weight:900;margin-top:auto;padding-top:16px}
+.freshness-important{background:#e7f1ea;padding:31px;margin-top:25px;border-radius:12px}
+.freshness-important h2{font:900 24px system-ui;letter-spacing:-.05em}
+.freshness-important p{font-size:12px;color:#647766;line-height:1.9;margin-bottom:20px;max-width:850px}
+@media(max-width:1150px){.discovery-shortcut-grid{grid-template-columns:repeat(3,1fr)}.idea-grid{grid-template-columns:1fr 1fr}.discovery-world-icons span{font-size:70px}}
+@media(max-width:760px){
+ .discovery-shortcuts{padding-top:35px;padding-bottom:10px}
+ .discovery-shortcut-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .discovery-chip{padding:14px 5px 12px;gap:6px}
+ .discovery-chip>span{font-size:30px}
+ .discovery-chip strong{font-size:10px}.discovery-chip small{font-size:9px}
+ .discovery-worlds{grid-template-columns:1fr;margin-top:22px}
+ .discovery-world-copy{padding:24px}
+ .discovery-world-copy h2{font-size:27px}
+ .discovery-world-icons{padding:12px}.discovery-world-icons span{font-size:53px}
+ .listing-subtype-pills{gap:6px}
+ .listing-subtype-pills a{font-size:10px;padding:9px}
+ .idea-top{margin:8px 0 27px}
+ .idea-grid{grid-template-columns:1fr}
+ .idea-head{min-height:145px}
+ .idea-head h2{font-size:23px}.idea-head>span{font-size:48px}
+ .idea-line{grid-template-columns:20px 32px minmax(0,1fr) auto}
+ .ideas-closer{padding:25px}
+ .freshness-grid{grid-template-columns:1fr}
+ .freshness-grid article{padding:21px}
+ .freshness-important{padding:23px}
+ .freshness-important h2{font-size:20px}
+}
+
+.ideas-status:empty{display:none}.ideas-status{display:inline-block;margin:8px 0 0;color:#2d6c45;font-size:12px;font-weight:900}
