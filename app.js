@@ -130,17 +130,17 @@ function pack(p,large){
 }
 function productCard(p){
  const on=favorites.includes(p.id);
- const flag=p.idx%7===1?"DEMO-ANGEBOT":p.idx%9===0?"NEU":p.idx%6===0?"BELIEBT":"";
+ const flag=p.idx%7===1?"UNSER DEMO-TIPP":p.idx%9===0?"DEMO-NEUHEIT":p.idx%6===0?"ENTDECKUNG":"";
  return '<article class="product-card" data-pid="'+p.id+'">'+
- '<div class="product-visual" data-product="'+p.id+'" role="button" tabindex="0" aria-label="Details zu '+safe(p.name)+'">'+
+ '<a class="product-visual" href="?produkt='+encodeURIComponent(p.id)+'" aria-label="Produktseite: '+safe(p.name)+'">'+
  (flag?'<span class="flag">'+flag+'</span>':"")+
  pack(p)+
- '</div><button class="heart-btn'+(on?" active":"")+'" data-fav="'+p.id+'" aria-label="'+(on?"Aus Merkliste entfernen":"Auf Merkliste setzen")+'">'+(on?"♥":"♡")+'</button>'+
+ '</a><button class="heart-btn'+(on?" active":"")+'" data-fav="'+p.id+'" aria-label="'+(on?"Aus Merkliste entfernen":"Auf Merkliste setzen")+'">'+(on?"♥":"♡")+'</button>'+
  '<div class="product-body"><span class="product-overline">'+safe(p.category)+' · '+safe(p.origin)+'</span>'+
- '<button class="product-name" data-product="'+p.id+'">'+safe(p.name)+'</button>'+
+ '<a class="product-name" href="?produkt='+encodeURIComponent(p.id)+'">'+safe(p.name)+'</a>'+
  '<p class="product-subline">'+safe(p.size)+' · '+safe(p.brand)+'</p>'+
- '<div class="price-row"><div><div class="price">'+money(p.price)+(p.idx%7===1?'<span class="fake-was">'+money(Math.round(p.price*1.15*100)/100)+'</span>':'')+'</div><div class="unit-price">'+safe(p.unitPrice)+'</div></div>'+
- '<button class="add-btn" data-add="'+p.id+'" aria-label="'+safe(p.name)+' zum Warenkorb hinzufügen">+</button></div></div></article>';
+ '<div class="price-row"><div><div class="price">'+money(p.price)+'</div><div class="unit-price">'+safe(p.unitPrice)+'</div></div>'+
+ '<button class="add-btn" data-add="'+p.id+'" aria-label="'+safe(p.name)+' zum Warenkorb hinzufügen"'+(p.demoStock===0?' disabled title="Demo-Bestand aufgebraucht"':'')+'>'+(p.demoStock===0?'×':'+')+'</button></div></div></article>';
 }
 function initCategories(){
  const container=$("#category-grid");
@@ -244,14 +244,18 @@ function updateHeader(){
 }
 function add(id,n=1){
  const p=byId(id);if(!p)return;
- cart[id]=Math.max(0,(Number(cart[id])||0)+n);
+ if(p.demoStock===0){toast("Dieser Demo-Artikel ist derzeit nicht verfügbar");return}
+ const prev=Number(cart[id])||0;
+ const max=p.demoStock==null?99:Math.min(99,p.demoStock);
+ cart[id]=Math.min(max,Math.max(0,prev+n));
+ if(cart[id]===prev&&n>0){toast("Die Demo-Menge ist bereits ausgeschöpft");return}
  if(!cart[id])delete cart[id];
  save();updateHeader();renderCart();
  toast(p.name+(n>0?" wurde hinzugefügt":" wurde aktualisiert"));
 }
 function setQty(id,amount){
  if(!byId(id))return;
- if(amount<=0)delete cart[id];else cart[id]=Math.min(99,amount);
+ if(amount<=0)delete cart[id];else{const p=byId(id);cart[id]=Math.min(99,p.demoStock==null?99:p.demoStock,amount)}
  save();updateHeader();renderCart();
 }
 function toggleFav(id){
@@ -260,10 +264,23 @@ function toggleFav(id){
  if($("#product-modal").classList.contains("open"))showProduct(id,false);
  toast(favorites.includes(id)?"Auf der Merkliste gespeichert":"Aus der Merkliste entfernt");
 }
+function complementaryProducts(seed){
+ const n=(seed?.name||"").toLowerCase();
+ let terms;
+ if(/ramen|nudel|udon|soba|pho|vermicelli|mie|mi goreng/.test(n))terms=["Sojasauce Mild","Sesamöl Geröstet","Miso Paste Weiß","Chili Crisp Knusperöl"];
+ else if(/sushi|nori|reispapier/.test(n))terms=["Sushireis Rundkorn","Nori Algenblätter","Sojasauce Mild","Reisessig Mild"];
+ else if(/reis|klebreis/.test(n))terms=["Kokosmilch Cremig","Rote Currypaste","Sojasauce Mild","Nori Algenblätter"];
+ else if(/gyoza|dumpling|mandu|bao|dim sum|frühlingsrollen/.test(n))terms=["Sojasauce Mild","Chili Sauce Sweet","Sesamöl Geröstet","Reisessig Mild"];
+ else if(/sauce|paste|chili|miso|gewürz|öl/.test(n))terms=["Jasminreis Premium","Ramen Weizennudeln","Gyoza Gemüse","Reisnudeln 3 mm"];
+ else if(/mochi|cracker|keks|süß|snack|chips|pocky/.test(n))terms=["Matcha Tee Everyday","Jasmin Grüntee","Yuzu Fruchttee","Litschi Saft"];
+ else if(/tee|matcha|drink|nektar|limonade|soda/.test(n))terms=["Mochi Mango","Mochi Matcha","Reiscracker Sesam","Pocky Erdbeere Sticks"];
+ else if(/kokosmilch|kichererbsen|bambus|bohnen/.test(n))terms=["Grüne Currypaste","Jasminreis Premium","Reisnudeln 3 mm","Teriyaki Sauce"];
+ else terms=["Jasminreis Premium","Sojasauce Mild","Mochi Mango","Ramen Weizennudeln"];
+ const selection=terms.map(t=>products.find(p=>p.name===t)).filter(p=>p&&p.id!==seed?.id&&p.demoStock!==0);
+ return [...new Map(selection.map(p=>[p.id,p])).values()].slice(0,4);
+}
 function recommendation(seed){
- const map={"Reis & Nudeln":"Saucen & Gewürze","Saucen & Gewürze":"Reis & Nudeln","Snacks & Süßes":"Getränke & Tee","Getränke & Tee":"Snacks & Süßes","Tiefkühl & Fertiggerichte":"Saucen & Gewürze","Basics & Konserven":"Reis & Nudeln"};
- const target=seed?map[seed.category]:"Snacks & Süßes";
- return products.find(p=>p.category===target&&!cart[p.id]&&p.idx%7===0)||products.find(p=>!cart[p.id]);
+ return complementaryProducts(seed).find(p=>!cart[p.id])||products.find(p=>p.category!=="Reis & Nudeln"&&!cart[p.id]&&p.demoStock!==0);
 }
 function renderCart(){
  const container=$("#cart-content"),footer=$("#cart-footer");
@@ -326,22 +343,29 @@ function showProduct(id,shouldOpen=true){
 function showCheckout(){
  if(!count()){toast("Dein Warenkorb ist noch leer.");return}
  const sb=discounted(),ship=shippingPrice(shipping);
- $("#checkout-content").innerHTML='<span class="section-kicker">DEMONSTRATION / KASSE</span><h2>Fast bei deinem Genussmoment.</h2>'+
+ const entries=Object.entries(cart).filter(([id,qty])=>byId(id)&&qty>0);
+ $("#checkout-content").innerHTML='<span class="section-kicker">DEMONSTRATION / KASSE</span><div class="checkout-steps"><span>✓ 1 Warenkorb</span><span class="active">2 Lieferung & Zahlung</span><span>3 Bestellvorschau</span></div><h2>Fast bei deinem Genussmoment.</h2>'+
  '<p>So kann der echte Bestellprozess später aussehen. Die Eingaben werden weder gespeichert noch versendet; es werden keine Zahlungen ausgeführt.</p>'+
  '<div class="checkout-demo-note">Sicherer Demo-Modus · keine echte Bestellung · keine Zahlungsdaten</div>'+
+ '<div class="checkout-item-summary"><h3>Deine Auswahl ('+count()+' Artikel)</h3>'+entries.map(([id,qty])=>{const p=byId(id);return '<div><span>'+p.emoji+' '+safe(p.name)+' × '+qty+'</span><strong>'+money(p.price*qty)+'</strong></div>'}).join("")+'</div>'+
+ '<button type="button" id="fill-demo-data" class="fill-demo-data">✦ Beispielangaben für die Vorschau einfügen</button>'+
  '<form id="checkout-form"><div class="checkout-fields">'+
  '<label>Vorname<input autocomplete="off" name="first" placeholder="Vorname" required minlength="2"></label>'+
  '<label>Nachname<input autocomplete="off" name="last" placeholder="Nachname" required minlength="2"></label>'+
  '<label class="wide">E-Mail für Bestellvorschau<input autocomplete="off" type="email" name="email" placeholder="beispiel@domain.de" required></label>'+
- '<label class="wide">Straße & Hausnummer<input autocomplete="off" name="street" placeholder="Musterstraße 12" required></label>'+
- '<label>Postleitzahl<input autocomplete="off" name="postcode" inputmode="numeric" pattern="[0-9]{5}" placeholder="86150" required></label>'+
- '<label>Ort<input autocomplete="off" name="city" placeholder="Augsburg" required></label>'+
+ '<label class="wide" data-address-field>Straße & Hausnummer<input autocomplete="off" name="street" placeholder="Musterstraße 12" required></label>'+
+ '<label data-address-field>Postleitzahl<input autocomplete="off" name="postcode" inputmode="numeric" pattern="[0-9]{5}" placeholder="86150" required></label>'+
+ '<label data-address-field>Ort<input autocomplete="off" name="city" placeholder="Augsburg" required></label>'+
  '<label class="wide">Versandart<select name="shipping" id="checkout-shipping"><option value="standard">Standardversand (Demo) · '+(sb>=49?"Gratis":money(4.9))+'</option><option value="express">Expressversand (Demo) · 9,90 €</option><option value="pickup">Abholung im Markt (Demo) · Gratis</option></select></label>'+
  '<label class="wide">Bezahlmethode – rein visuelle Auswahl<select name="payment" id="checkout-payment"><option>PayPal (nicht angebunden)</option><option>Debit- / Kreditkarte (nicht angebunden)</option><option>SEPA-Überweisung (nicht angebunden)</option><option>Rechnung (nicht angebunden)</option></select></label></div>'+
  '<div class="demo-coupon"><label for="coupon-input">Demo-Aktionscode</label><div><input id="coupon-input" value="'+(coupon?"WILLKOMMEN5":"")+'" placeholder="z. B. WILLKOMMEN5"><button type="button" id="apply-coupon">Anwenden</button></div><small>Code WILLKOMMEN5: 5 % Demo-Nachlass auf den Warenwert. Keine echte Aktion.</small></div>'+
  '<div class="checkout-total"><span>Beispiel-Gesamtsumme</span><span id="checkout-total">'+money(sb+ship)+'</span></div>'+
  '<button class="btn btn-dark" type="submit">Bestellvorschau anzeigen ↗</button><p class="checkout-fineprint">Mit diesem Button wird keine rechtsverbindliche Bestellung ausgelöst. Kein Versand, keine Zahlung, kein Datenversand.</p></form>';
- overlay("checkout");$("#checkout-shipping").value=shipping;
+ overlay("checkout");$("#checkout-shipping").value=shipping;updateCheckoutAddress();
+}
+function updateCheckoutAddress(){
+ const pickup=shipping==="pickup";
+ $all("#checkout-content [data-address-field]").forEach(label=>{label.hidden=pickup;const field=label.querySelector("input");if(field)field.required=!pickup;});
 }
 function updateCheckoutTotal(){
  $("#checkout-total").textContent=money(discounted()+shippingPrice(shipping));
@@ -400,7 +424,7 @@ function showSearchResults(){
 
 function initializeEvents(){
  document.addEventListener("click",e=>{
- const suggestion=e.target.closest("[data-search-product]");if(suggestion){e.preventDefault();closeSearchSuggestions();$("#global-search").blur();showProduct(suggestion.dataset.searchProduct);return}
+ const suggestion=e.target.closest("[data-search-product]");if(suggestion){e.preventDefault();closeSearchSuggestions();$("#global-search").blur();location.href="?produkt="+encodeURIComponent(suggestion.dataset.searchProduct);return}
  if(e.target.closest("[data-search-all]")){e.preventDefault();showSearchResults();return}
  if(e.target.closest("[data-search-clear]")){e.preventDefault();$("#global-search").value="";closeSearchSuggestions();$("#global-search").focus();return}
  if(!e.target.closest(".search-wrap"))closeSearchSuggestions();
@@ -415,6 +439,11 @@ function initializeEvents(){
  if(e.target.closest("[data-close]")||e.target===$("#backdrop")){closeAll();return}
  if(e.target.closest("[data-checkout]")){showCheckout();return}
  if(e.target.closest("#reset-filter")){cat="Alle";origin="Alle";brand="Alle";search="";onlyFaves=false;$("#global-search").value="";renderCatalog();return}
+ if(e.target.closest("#fill-demo-data")){
+  e.preventDefault();
+  const form=$("#checkout-form");if(form){const vals={first:"Max",last:"Muster",email:"demo@example.invalid",street:"Musterstraße 12",postcode:"86150",city:"Augsburg"};for(const [name,value] of Object.entries(vals)){const field=form.elements.namedItem(name);if(field)field.value=value;}toast("Fiktive Beispielangaben eingefügt – nichts wurde gespeichert oder versendet.");}
+  return;
+ }
  if(e.target.closest("#apply-coupon")){
  const code=($("#coupon-input").value||"").trim().toUpperCase();
  if(code==="WILLKOMMEN5"){coupon=true;toast("Demo-Rabatt: 5 % aktiviert.");renderCart();updateCheckoutTotal();}
@@ -433,7 +462,7 @@ function initializeEvents(){
  $("#sort-filter").addEventListener("change",e=>{sort=e.target.value;limit=20;renderCatalog()});
  $("#more-button").addEventListener("click",()=>{limit+=20;renderCatalog()});
  $("#newsletter-form").addEventListener("submit",e=>{e.preventDefault();e.target.reset();toast("Vorschau: Ein echter Newsletter wurde nicht abonniert.")});
- $("#checkout-content").addEventListener("change",e=>{if(e.target.id==="checkout-shipping"){shipping=e.target.value;updateCheckoutTotal()}});
+ $("#checkout-content").addEventListener("change",e=>{if(e.target.id==="checkout-shipping"){shipping=e.target.value;updateCheckoutAddress();updateCheckoutTotal()}});
  $("#checkout-content").addEventListener("submit",e=>{if(e.target.id==="checkout-form"){e.preventDefault();showSuccess()}});
  document.addEventListener("keydown",e=>{
  if(e.key==="Escape")closeAll();
@@ -442,5 +471,5 @@ function initializeEvents(){
  });
 }
 initCategories();featured();renderCatalog();renderCart();updateHeader();initializeEvents();
-window.NORI_DEMO={productCount:products.length,products,cartContents:()=>({...cart}),filteredCount:()=>listProducts().length,addToCart:add,showCheckout};
+window.NORI_DEMO={productCount:products.length,products,cartContents:()=>({...cart}),filteredCount:()=>listProducts().length,addToCart:add,showCheckout,searchResults:query=>rankedSearchProducts(query),complementaryProducts,refresh:()=>{renderCatalog();featured();renderCart();updateHeader()},formatMoney:money};
 })();

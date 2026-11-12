@@ -1,7 +1,7 @@
 /* ASIA MART — retail-first presentation redesign. Local, framework-free. */
 :root{--mart-ink:#1d2425;--mart-red:#e63d2a;--mart-reddeep:#b62219;--mart-yellow:#ffd84c;--mart-cream:#faf9f5;--mart-white:#fff;--mart-line:#e7e9e7;--mart-muted:#64716e}
 html{scroll-padding-top:135px}
-body.market{background:var(--mart-cream);color:var(--mart-ink);font-family:'DM Sans',sans-serif}
+body.market{background:var(--mart-cream);color:var(--mart-ink);font-family:system-ui,sans-serif}
 body.market .layout{max-width:1500px}
 .demo-top{background:#1f2b2d;color:#fff;padding:8px 15px;text-align:center;font-size:11px;letter-spacing:.04em}
 .demo-top span{background:var(--mart-yellow);color:#131d1c;padding:4px 8px;margin-right:9px;border-radius:3px;font-weight:900}
@@ -12,7 +12,7 @@ body.market .shop-header{background:#fff;box-shadow:0 4px 20px #212d2610}
 body.market .header-main{height:92px;gap:32px}
 .market-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .market-logo-star{width:50px;height:50px;display:grid;place-items:center;border-radius:13px;background:var(--mart-red);color:#fff;font-size:37px;font-weight:900}
-.market-logo-name{display:block;color:var(--mart-ink);font:1000 27px/.94 'Manrope',sans-serif;letter-spacing:-.08em}
+.market-logo-name{display:block;color:var(--mart-ink);font:1000 27px/.94 system-ui,sans-serif;letter-spacing:-.08em}
 .market-logo-name>span{color:var(--mart-red)}
 .market-logo-name small{display:block;font-size:8px;letter-spacing:.17em;color:#64716c;font-weight:900;line-height:1.5;margin-top:5px}
 body.market .search-wrap{background:#f5f7f4;border-radius:9px;max-width:770px;height:54px;border:1.5px solid #dae0d9}
@@ -30,10 +30,10 @@ body.market .nav-inner a.nav-all{background:var(--mart-red);padding:15px 16px;co
 body.market .nav-inner a.nav-ship{margin-left:auto;color:#a03023}
 .market-hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;padding-top:25px;padding-bottom:24px}
 .market-hero-main{background:#eaf1c8;min-height:475px;border-radius:15px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr);position:relative}
-.market-hero-main:after{content:'ASIA';position:absolute;right:-20px;bottom:-45px;font:1000 165px 'Manrope';letter-spacing:-.08em;color:#dfe9b4;pointer-events:none;opacity:.45}
+.market-hero-main:after{content:'ASIA';position:absolute;right:-20px;bottom:-45px;font:1000 165px system-ui;letter-spacing:-.08em;color:#dfe9b4;pointer-events:none;opacity:.45}
 .hero-words{padding:54px 10px 40px 50px;z-index:3;position:relative}
-.retail-eyebrow{color:#b43121;font:900 11px 'DM Sans',sans-serif;letter-spacing:.13em}
-.hero-words h1{font:1000 clamp(42px,4vw,65px)/1.03 'Manrope',sans-serif;letter-spacing:-.078em;margin:22px 0 20px;max-width:540px;color:#1c302c}
+.retail-eyebrow{color:#b43121;font:900 11px system-ui,sans-serif;letter-spacing:.13em}
+.hero-words h1{font:1000 clamp(42px,4vw,65px)/1.03 system-ui,sans-serif;letter-spacing:-.078em;margin:22px 0 20px;max-width:540px;color:#1c302c}
 .hero-words h1 em{font-style:normal;color:var(--mart-red)}
 .hero-words p{font-size:14px;line-height:1.85;color:#405450;max-width:385px;margin:0}
 .hero-cta-row{display:flex;align-items:center;flex-wrap:wrap;gap:19px;margin-top:30px}
@@ -46,7 +46,7 @@ body.market .nav-inner a.nav-ship{margin-left:auto;color:#a03023}
 .hero-floor{position:absolute;width:92%;height:43px;background:#273c3070;border-radius:50%;filter:blur(20px);bottom:43px;left:4%;z-index:1}
 .hero-product{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;box-shadow:13px 17px 18px #2c3a3050,inset -10px 0 12px #0001;border:1px solid #ffffff81;padding:20px 10px 16px;z-index:2}
 .hero-product small{font-size:10px;letter-spacing:.14em;font-weight:900}
-.hero-product span{font:1000 22px/1.05 'Manrope',sans-serif;letter-spacing:-.06em}
+.hero-product span{font:1000 22px/1.05 system-ui,sans-serif;letter-spacing:-.06em}
 .hero-product b{font-size:48px;filter:drop-shadow(0 6px 5px #0a26152c)}
 .hero-product i{font-size:10px;font-style:normal;letter-spacing:.06em;font-weight:900}
 .hp-rice{background:#fff7d6;color:#16483b;border-radius:11px;transform:rotate(-9deg);height:290px;width:155px;left:16%;top:105px;z-index:3}
@@ -56,12 +56,12 @@ body.market .nav-inner a.nav-ship{margin-left:auto;color:#a03023}
 .hp-sauce:before{content:'';position:absolute;top:-17px;left:28px;width:39px;height:18px;background:#c82925;border-radius:7px 7px 2px 2px}
 .hp-sauce span{font-size:16px}.hp-sauce b{font-size:30px}
 .hero-price-sticker{position:absolute;z-index:8;top:35px;right:16px;width:124px;height:124px;border-radius:50%;transform:rotate(15deg);background:#1d3934;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:5px solid #eaf1c8;outline:1px dashed #33564f}
-.hero-price-sticker b{font:900 14px/1.25 'Manrope'}.hero-price-sticker small{font-size:7px;letter-spacing:.13em;margin-top:8px}
+.hero-price-sticker b{font:900 14px/1.25 system-ui}.hero-price-sticker small{font-size:7px;letter-spacing:.13em;margin-top:8px}
 .market-side-promos{display:grid;grid-template-rows:1fr 1fr;gap:14px}
 .side-promo{position:relative;padding:27px 24px;overflow:hidden;display:flex;align-items:flex-start;flex-direction:column;border-radius:14px;isolation:isolate}
 .side-red{background:#ec5b47;color:#fff}.side-yellow{background:#ffd44b;color:#3c3422}
 .side-promo .promo-overline{font-size:10px;letter-spacing:.12em;font-weight:900;opacity:.85;position:relative;z-index:2}
-.side-promo strong{font:1000 29px/1.1 'Manrope',sans-serif;letter-spacing:-.065em;position:relative;z-index:2;margin:14px 0 7px}
+.side-promo strong{font:1000 29px/1.1 system-ui,sans-serif;letter-spacing:-.065em;position:relative;z-index:2;margin:14px 0 7px}
 .side-promo>span:not(.promo-overline):not(.promo-glyph){font-size:12px;font-weight:600;position:relative;z-index:2}
 .side-promo>b{font-size:11px;margin-top:auto;position:relative;z-index:2}
 .side-promo .promo-glyph{font-size:112px;position:absolute;right:-15px;bottom:5px;transform:rotate(-15deg);opacity:.7;z-index:1;filter:drop-shadow(4px 8px 5px #0002)}
@@ -72,7 +72,7 @@ body.market .nav-inner a.nav-ship{margin-left:auto;color:#a03023}
 body.market .shop-section{padding-top:66px;padding-bottom:20px}
 .retail-label{color:var(--mart-red);font-size:10px;letter-spacing:.15em;font-weight:900}
 body.market .section-heading{margin:12px 0 28px;display:flex;flex-direction:row;align-items:end}
-body.market .section-heading h2{font:1000 clamp(28px,3vw,41px)/1.17 'Manrope',sans-serif;letter-spacing:-.065em;margin:8px 0 0}
+body.market .section-heading h2{font:1000 clamp(28px,3vw,41px)/1.17 system-ui,sans-serif;letter-spacing:-.065em;margin:8px 0 0}
 body.market .section-heading h2 em{font:inherit;color:var(--mart-red);font-style:normal}
 body.market .section-heading p{margin:7px 0 0;color:#6b7b74;font-size:12px}
 .shop-all-link{font-size:12px;font-weight:900;color:#d03728;border-bottom:1px solid #e1afaa;padding-bottom:4px;white-space:nowrap}
@@ -86,18 +86,18 @@ body.market .category-card:nth-child(4) .category-image{--cattint:#e4ebf5}
 body.market .category-card:nth-child(5) .category-image{--cattint:#d9eee0}
 body.market .category-card:nth-child(6) .category-image{--cattint:#f8e9c9}
 body.market .category-card .cat-emoji{font-size:53px}
-body.market .category-card strong{font:900 13px/1.3 'Manrope',sans-serif;color:#28332e;margin-top:8px}
+body.market .category-card strong{font:900 13px/1.3 system-ui,sans-serif;color:#28332e;margin-top:8px}
 body.market .category-card small{font-size:10px;line-height:1.4;margin-top:6px;color:#869089}
 body.market .category-card .cat-arrow{color:var(--mart-red)}
 .deals-section{padding-top:75px!important}
 .deals-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px}
 .deal-banner{background:#da3d29;border-radius:12px;overflow:hidden;color:#fff;padding:26px 21px;display:flex;flex-direction:column;align-items:flex-start;position:relative}
-.deal-banner:after{content:'%';position:absolute;right:-37px;bottom:-44px;font:1000 240px 'Manrope';color:#fff2;z-index:0}
+.deal-banner:after{content:'%';position:absolute;right:-37px;bottom:-44px;font:1000 240px system-ui;color:#fff2;z-index:0}
 .deal-banner>*{position:relative;z-index:1}
 .deal-banner-kicker{font-size:9px;font-weight:900;letter-spacing:.14em;background:#fff;color:#ae322a;padding:7px 9px;border-radius:20px}
-.deal-banner strong{font:1000 32px/1.13 'Manrope',sans-serif;letter-spacing:-.07em;margin:30px 0 12px}
+.deal-banner strong{font:1000 32px/1.13 system-ui,sans-serif;letter-spacing:-.07em;margin:30px 0 12px}
 .deal-banner p{font-size:12px;line-height:1.8;color:#fff5}
-.deal-banner>b{background:#fffbdc;color:#ac392a;border-radius:7px;padding:12px 15px;font:900 14px 'Manrope';letter-spacing:.12em;margin-top:17px}
+.deal-banner>b{background:#fffbdc;color:#ac392a;border-radius:7px;padding:12px 15px;font:900 14px system-ui;letter-spacing:.12em;margin-top:17px}
 .deal-banner-link{color:white;font-size:11px;font-weight:900;text-decoration:underline;text-underline-offset:5px;margin-top:auto;padding-top:30px}
 body.market .featured-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 body.market .products-grid{gap:13px}
@@ -122,7 +122,7 @@ body.market .pack{overflow:visible;transform:rotate(-3deg);display:flex;align-it
 body.market .pack:hover{transform:rotate(-1deg)}
 body.market .pack:after{display:none}
 body.market .pack-brand{font-size:9px;letter-spacing:.09em;z-index:2;max-width:100%;word-break:break-word}
-body.market .pack-name{font:1000 12px/1.17 'Manrope',sans-serif;letter-spacing:-.035em;z-index:2;text-transform:uppercase;max-width:140px}
+body.market .pack-name{font:1000 12px/1.17 system-ui,sans-serif;letter-spacing:-.035em;z-index:2;text-transform:uppercase;max-width:140px}
 body.market .pack-graphic{font-size:60px;line-height:1;filter:drop-shadow(0 6px 4px #142b2920)}
 body.market .pack-size{background:#fffa;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;z-index:2;color:#3b5148}
 body.market .pack-type-0{width:157px;max-width:85%;height:169px;border-radius:14px 14px 17px 17px;clip-path:polygon(3% 0,97% 0,100% 100%,0 100%)}
@@ -156,13 +156,13 @@ body.market .load-more-wrap .btn{border-color:#bbc9be;border-radius:8px}
 .country-korea{background:#d8e5f5;color:#2a3a51}
 .country-thai{background:#f5e7af;color:#554225}
 .country-vietnam{background:#cfe8d4;color:#2c4f3c}
-.country-sign{position:absolute;right:-12px;bottom:-47px;font:1000 144px 'Manrope',sans-serif;letter-spacing:-.12em;opacity:.11;pointer-events:none}
-.country-card strong{font:1000 25px 'Manrope';letter-spacing:-.07em;margin:26px 0 3px}
+.country-sign{position:absolute;right:-12px;bottom:-47px;font:1000 144px system-ui,sans-serif;letter-spacing:-.12em;opacity:.11;pointer-events:none}
+.country-card strong{font:1000 25px system-ui;letter-spacing:-.07em;margin:26px 0 3px}
 .country-card small{font-size:12px;opacity:.77}
 .country-card b{font-size:11px;margin-top:auto;padding-top:17px}
 .quick-shop-banner{display:grid;grid-template-columns:1fr .85fr;min-height:305px;background:#1b3830;border-radius:14px;color:white;overflow:hidden}
 .quick-shop-banner>div:first-child{padding:43px 53px;z-index:2}
-.quick-shop-banner h2{font:1000 42px/1.15 'Manrope',sans-serif;letter-spacing:-.07em;margin:12px 0}
+.quick-shop-banner h2{font:1000 42px/1.15 system-ui,sans-serif;letter-spacing:-.07em;margin:12px 0}
 .quick-shop-banner h2 em{font-style:normal;color:#fdd35b}
 .quick-shop-banner p{max-width:425px;color:#d7e4d6;line-height:1.8;font-size:13px;margin:0 0 22px}
 .quick-goods{position:relative;background:#295245}
@@ -174,7 +174,7 @@ body.market .load-more-wrap .btn{border-color:#bbc9be;border-radius:8px}
 body.market .fulfillment{padding-top:80px;padding-bottom:35px;margin-top:0;margin-bottom:40px}
 body.market .payment-row{margin-top:18px}
 .signup-section{display:flex;align-items:center;justify-content:space-between;gap:30px;background:#fcf4d7;border-radius:14px;margin-bottom:85px;padding-top:35px;padding-bottom:35px}
-.signup-section h2{font:1000 30px 'Manrope';letter-spacing:-.06em;margin:10px 0}
+.signup-section h2{font:1000 30px system-ui;letter-spacing:-.06em;margin:10px 0}
 .signup-section p{max-width:440px;font-size:12px;color:#6c6e59;line-height:1.8}
 .signup-section .newsletter-form{min-width:340px;width:40%}
 .signup-section .newsletter-form button{background:#d43f2c}
@@ -284,7 +284,7 @@ body.market .demo-ribbon{background:var(--mart-yellow);color:#433621}
 .retail-photo-banner-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .retail-photo-banner-img>span{position:absolute;bottom:13px;left:14px;font-size:9px;font-weight:800;color:#fff;background:#172821bf;padding:7px 10px;border-radius:4px}
 .retail-photo-banner-copy{background:#dceadb;padding:38px 50px;display:flex;align-items:flex-start;justify-content:center;flex-direction:column}
-.retail-photo-banner-copy h2{font:1000 35px/1.15 'Manrope',sans-serif;letter-spacing:-.07em;margin:13px 0}
+.retail-photo-banner-copy h2{font:1000 35px/1.15 system-ui,sans-serif;letter-spacing:-.07em;margin:13px 0}
 .retail-photo-banner-copy h2 em{font-style:normal;color:#c93a2e}
 .retail-photo-banner-copy p{font-size:12px;line-height:1.9;color:#4e6a5b;max-width:440px;margin:2px 0 19px}
 .retail-photo-banner-copy .market-button{font-size:11px;min-height:43px;padding:11px 16px}
@@ -334,10 +334,10 @@ html:has(#global-search:focus){scroll-padding-top:0!important}
 /* GoAsia-inspired retail discovery: original component styling, no brand copying. */
 .retail-collections .retail-collection-group{margin-top:25px}
 .retail-collections .retail-collection-title{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:16px}
-.retail-collections .retail-collection-title h3{font:900 22px/1.25 'Manrope',sans-serif;letter-spacing:-.055em;margin:8px 0 0}
-.retail-collections .retail-collection-title h3 small{font:600 11px 'DM Sans',sans-serif;color:#89968f;letter-spacing:normal;margin-left:10px;white-space:nowrap}
+.retail-collections .retail-collection-title h3{font:900 22px/1.25 system-ui,sans-serif;letter-spacing:-.055em;margin:8px 0 0}
+.retail-collections .retail-collection-title h3 small{font:600 11px system-ui,sans-serif;color:#89968f;letter-spacing:normal;margin-left:10px;white-space:nowrap}
 .retail-collections .retail-collection-title a{font-weight:800;font-size:11px;color:#bd3a2e;text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
-.retail-collections .retail-section-chip{font:900 10px 'DM Sans',sans-serif;letter-spacing:.1em;color:#ad3c2d;background:#ffe9dc;padding:6px 10px;border-radius:5px}
+.retail-collections .retail-section-chip{font:900 10px system-ui,sans-serif;letter-spacing:.1em;color:#ad3c2d;background:#ffe9dc;padding:6px 10px;border-radius:5px}
 .retail-collections .retail-section-chip.new{background:#e6f0e7;color:#315d44}
 body.market .retail-collections .collection-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
 body.market .retail-collections .collection-grid .product-visual{height:185px}

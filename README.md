@@ -1,66 +1,30 @@
-# ASIA MART — eigenständige Asia-Supermarkt Shop-Demo
+# ASIA MART — eigenständige Asia-Supermarkt-Demo
 
-**Status:** Interaktive Präsentationsfassung, 150 fiktive Artikel, keinerlei echter Verkauf. **Nicht als Live-Shop einsetzen.**
+Interaktiver, **fiktiver** Shop-Prototyp zur Kundengewinnung, kein rechtlich oder technisch betriebsbereiter Onlineshop. Kein echtes Payment, keine Kundendaten, kein Live-Versand.
 
-## Start
-- Auf Windows START_PREVIEW.bat doppelklicken oder index.html im Browser öffnen.
-- Keine Build-Tools, kein Server und kein zahlungspflichtiger Dienst für den Shop nötig.
-- Alle Demo-Produkte sind frei erfunden. Preise, Herkunft, Zutaten, Allergene und Nährwerte dienen nur der Funktionserprobung.
-- Nur der Warenkorb und die Merkliste werden lokal in diesem Browser gespeichert. Checkout-Eingaben werden nicht übermittelt oder gespeichert.
-- Bezahlmethoden sind rein visuelle Auswahl. Kein Payment Provider, keine echte Zahlung, kein Versandauftrag.
+## Lokal starten
+Doppelklick auf \`START_PREVIEW.bat\` oder \`index.html\`. Alle Seiten verwenden Query-Parameter der selben HTML-Datei und funktionieren auch lokal.
 
-## Konkurrenzstudie — funktionale Muster, keine Kopie
-Untersucht wurden öffentlich sichtbare Shop-Strukturen, keine proprietären Designs oder Codes:
+## Kundenvorschau
+- **150 Musterartikel** mit Demo-Nährwerten und markiert fiktiven Informationen
+- **Produktdetails mit eigener URL**, Mengenwahl und sinnvoll ergänzenden Zutaten
+- **Separates Sortiment** mit Filtern nach Warengruppe, Marke, Herkunft und Preis, Sortierung und Paginierung
+- **Mobile Produktsuche**, Merkliste, Warenkorb und Kaufprozess als Simulation
+- **Gast-Checkout** mit Beispielfeldern, Versandarten, Zahlungsmethoden und Bestellvorschau, ohne echte Bestellung
+- **FAQ, Versand, Kontakt und Konzeptseiten**
+- **Händler-Demo** \`?seite=verwaltung\`: fiktive Produktpreise und Bestände lokal bearbeiten, Beispielaufträge ansehen, CSV exportieren, Demodaten zurücksetzen
+- **Keine externen Schriftanbieter**; lokale Fotos aus frei verfügbaren Bilddatenbanken als eindeutig gekennzeichnete Symbolbilder
+- **Mobile Bottom-Navigation** und zugänglichere Bedienelemente
 
-1. Go Asia (https://goasia.net/de/) — Sortimentsbreite, Kategorien, Produktkarten und Grundpreise.
-2. NikanKitchen (https://www.nikankitchen.com/de/) — Premium-Markenwirkung, Themenwelten, Versandversprechen und Inspiration.
-3. Asian Food Lovers (https://www.asianfoodlovers.de/) — Angebote, Kategorien, Rezeptideen und größere Einkaufspackungen.
-4. Asiafoodland (https://www.asiafoodland.de/) — Warengruppen, Deals, Rezepte und Grundpreise.
-5. Baymard (https://baymard.com/research/checkout-usability) — unkomplizierter Checkout und relevante statt aufdringlicher Cross-Sells.
+## Qualität
+\`node qa.cjs\` führt die wichtigsten E2E- und Mobiltests aus (Puppeteer Core wird nur für lokale QA benötigt).
+\`buyer-acceptance-qa.cjs\`, \`checkout-qa.cjs\`, \`search-mobile-qa.cjs\` und \`search-relevance-qa.cjs\` können einzeln gestartet werden.
 
-## Geplante Umsatzhebel im Prototyp
-- Entdeckung: Hero, Geschmackswelten, thematische Entdeckungslisten.
-- Produktsuche: sechs Kategorien, Herkunftsfilter, Volltextsuche, Sortierung und Produktdetails.
-- Rezeptbasierte Ergänzung: Ramen- und Sushi-Zutatensets als freiwillige Warenkorb-Aktionen.
-- Warenkorb-Ergänzung: freiwillige, kontextuelle Produktvorschläge.
-- Versandprogress: Beispielschwelle 49 EUR für kostenlosen Standardversand, erst im Live-Shop wirtschaftlich kalkulieren.
-- Demo-Gutschein: WILLKOMMEN5, 5 Prozent Nachlass, ausdrücklich fiktiv.
-- Gast-Checkout: Versandoptionen, Zahlungsarten ohne echte Verarbeitung.
-- Merkliste: Favoriten lokal im Browser; echtes Kundenkonto erst im späteren Ausbau.
+## Dokumentation
+- \`ABNAHME_DEMO_2026-11-12.md\`: Abnahmekriterien, vollständige Scope-Abgrenzung und späterer Live-Ausbau
+- \`research/GoAsia_Referenzanalyse_2026-11-12.md\`: Vergleich und UX-Ableitungen
 
-Diese Maßnahmen sind Conversion-Hypothesen, keine garantierten Gewinnsteigerungen.
-Später Conversion Rate, durchschnittlichen Warenkorbwert, Netto-Marge nach Rabatt und
-Versand, Cross-Sell-Anteil und Wiederkaufrate messen.
+## Rechtliche Trennung
+Kundenindividuelle Impressums-, Datenschutz-, Liefer- und Produktpflichtangaben werden nach Freigabe ergänzt. Die bereits öffentlich gehostete Demo kann **eigene Betreiberpflichten** haben; das muss unabhängig davon geprüft werden.
 
-## Funktionen
-Fertig als Demo: 150 Produkte, Produktinformationen, Filter, Suche, Favoriten,
-Warenkorb mit Menge, Rezeptsets, Vorschläge, Demo-Gutschein, Versandsimulation,
-Zahlungsarten-Auswahl, Bestellvorschau, responsives Layout.
-
-Nicht vorhanden: echtes Lager/ERP, Kundenkonto, Live-Versand, Live-Zahlung,
-Echtzeit-Bestand, geprüfte Lebensmitteletiketten, steuerliche Integration,
-Newsletter-Versand, vollständige rechtliche Seiten.
-
-## Vor Inbetriebnahme verbindlich ergänzen
-- Art. 14 LMIV: verifizierte Lebensmittelangaben, Zutaten, Allergene,
-  Nährwerte, Füllmenge und ggf. Verantwortliche/Ursprung/Anweisungen.
-- PAngV: echte Brutto- und Grundpreise, Versand- und Steuerinformationen.
-- Impressum nach DDG, Datenschutzerklärung, DSGVO-konforme Verarbeitung,
-  Widerrufsbelehrung, verbindliche Kundeninformationen und Bestellbutton.
-- Liefergebiete, Kühlkette bei Tiefkühlware, Verpackung, Logistik, Retouren,
-  Verfügbarkeit, Reklamationen und verbindliche AGB soweit verwendet.
-- Payment-Anbieter, echte Zahlungs- und Steuertests, Sicherheit und Monitoring.
-- Rechte und Genauigkeit von Marken, Bildmaterial und Produktdaten prüfen.
-- Rechtliche und technische Abnahme vor Livebetrieb.
-
-## Assets
-Die neue Supermarkt-Regalaufnahme stammt von lee starry / Pexels (https://www.pexels.com/photo/vibrant-asian-supermarket-shelves-with-products-32418799/), laut Pexels mit freier Lizenz. Das Motiv dient nur als gekennzeichnetes Symbolbild, nicht als tatsächliche Filiale. Weitere ältere, in der aktuellen Startseite nicht verwendete Lifestyle-Fotos sind lokal vorhanden.
-Verpackungen, Shopname und Katalog sind eigenständige Illustrationen und Muster,
-keine Darstellungen echter Marken oder konkreter Handelsprodukte.
-
-## QA
-Headless-Browsertest lokal: node qa.cjs. Testet 150 Produkte, Bilder,
-Suche, Details, Warenkorb, Checkout, Desktop/Mobil und JavaScript-Fehler.
-Puppeteer Core wird nur als kostenlose Entwicklungshilfe verwendet.
-
-Alle Dateien liegen isoliert in diesem Projektordner.
+Projektdaten und Tests sind ausschließlich im Ordner \`AsiaMarkt_Shop_Demo_2026-11-04\` abgelegt. Andere Projekte sind unberührt.
