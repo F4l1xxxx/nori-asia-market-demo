@@ -41,6 +41,15 @@ const server=http.createServer((req,res)=>{
     assert.equal(checks[1].name,'Reisnudeln 3 mm');
     assert.equal(checks[2].name,'Sojasauce Mild');
     assert.equal(checks[3].confidence,'missing','Onions are not in this demo catalog');
+    const naming=await page.evaluate(()=>{
+      const scan=window.ASIA_RECIPE_SCANNER;
+      return ['Ramen','Rahmen','Ramen Nudeln','Pho Nudeln','Vermicelli','Tamari','Sojasoße','Basmati Reis','Pilze','Ingwer','Sesam','Salz'].map(label=>[label,scan.matchIngredient(label).product?.name||null]);
+    });
+    assert.deepEqual(naming.slice(0,7).map(r=>r[1]),[
+      'Ramen Weizennudeln','Ramen Weizennudeln','Ramen Weizennudeln','Pho Reisbandnudeln',
+      'Vermicelli Reisfäden','Tamari Sauce','Sojasauce Mild'
+    ],'Ingredient names resolve to the right catalogue type');
+    assert.ok(naming.slice(7).every(r=>r[1]===null),'No taste-changing replacements for unrelated ingredients');
     const layout=await page.evaluate(()=>{
       const words=[
         [1,1,1,50,100,'Zubereitung'],[1,1,2,780,100,'Zutaten'],
@@ -62,16 +71,44 @@ const server=http.createServer((req,res)=>{
     const info=await page.evaluate(()=>({rows:[...document.querySelectorAll('#rs-review-list .rs-result')].length,
       count:document.querySelector('#cart-count').textContent,
       products:window.NORI_DEMO.products.filter(p=>window.NORI_DEMO.cartContents()[p.id]).map(p=>[p.name,window.NORI_DEMO.cartContents()[p.id]])}));
-    assert.equal(info.rows,5);assert.equal(info.count,'5');
+    assert.equal(info.rows,4,'Unavailable onion is not displayed');assert.equal(info.count,'5');
     assert.ok(info.products.some(([name,count])=>name==='Kokosmilch Cremig'&&count===2));
     const choiceUI=await page.evaluate(()=>{
       const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
-      return {count:card?.querySelectorAll('.rs-variant-option').length,
+      return {count:card?.querySelectorAll('.rs-variant-option').length||0,
         visible:[...(card?.querySelectorAll('.rs-variant-option')||[])].filter(e=>!e.closest('[hidden]')).length,
         more:card?.querySelector('.rs-more-variants')?.textContent||''};
     });
-    assert.equal(choiceUI.visible,1,'Only the equivalent recommendation is shown initially');
-    assert.match(choiceUI.more,/Weitere Produkte/,'More alternatives are opt-in');
+    assert.equal(choiceUI.count,0,'Dark soy sauce and tamari are not treated as equivalent to mild soy sauce');
+    assert.equal(choiceUI.more,'','No extra-options button for incompatible sauces');
+    const brandTest=await page.evaluate(()=>{
+      const arr=window.NORI_DEMO.products;
+      const base=arr.find(p=>p.name==='Sojasauce Mild');
+      const extra=[1,2,3,4].map(i=>({...base,id:'qa-soy-brand-'+i,name:'Marke '+i+' Sojasauce Mild',brand:'Marke '+i,price:2.99+i/10}));
+      arr.push(...extra);
+      const row=window.ASIA_RECIPE_SCANNER.analyzeText('2 EL Sojasauce')[0];
+      const candidates=window.ASIA_RECIPE_SCANNER.alternativesFor(row);
+      const formerStock=base.demoStock;
+      base.demoStock=0;
+      const fallback=window.ASIA_RECIPE_SCANNER.analyzeText('2 EL Sojasauce')[0].product?.id;
+      base.demoStock=formerStock;
+      const baseIndex=arr.indexOf(base);
+      arr.splice(baseIndex,1);
+      const renamedBrand=window.ASIA_RECIPE_SCANNER.matchIngredient('Sojasauce').product?.id;
+      arr.splice(baseIndex,0,base);
+      document.querySelector('#rs-manual').click();
+      return {matchingBrands:candidates.length,fallback,renamedBrand};
+    });
+    assert.equal(brandTest.matchingBrands,5,'Only five mild soy sauce brands; dark and tamari excluded');
+    assert.match(brandTest.fallback,/qa-soy-brand/,'A different brand replaces an unavailable default without changing flavor');
+    assert.match(brandTest.renamedBrand,/qa-soy-brand/,'Ingredient matches a renamed catalogue product');
+    const collapsed=await page.evaluate(()=>{
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      return {shown:[...card.querySelectorAll('.rs-variant-option')].filter(e=>!e.closest('[hidden]')).length,
+        count:card.querySelector('.rs-more-variants')?.textContent};
+    });
+    assert.equal(collapsed.shown,3,'Only three same-variety brands initially visible');
+    assert.match(collapsed.count,/Weitere Produkte \(2\)/);
     await page.evaluate(()=>{
       const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
       card.querySelector('.rs-more-variants').click();
@@ -81,36 +118,41 @@ const server=http.createServer((req,res)=>{
       return {visible:[...card.querySelectorAll('.rs-variant-option')].filter(e=>!e.closest('[hidden]')).length,
         expanded:card.querySelector('.rs-more-variants').getAttribute('aria-expanded')};
     });
-    assert.equal(expanded.visible,3,'All three real soy sauce types visible only after expanding');
+    assert.equal(expanded.visible,5,'Only genuine equivalent brands expanded');
     assert.equal(expanded.expanded,'true');
     await page.evaluate(()=>{
-      const dark=window.NORI_DEMO.products.find(p=>p.name==='Sojasauce Dunkel');
       const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
-      const radio=card.querySelector('input[data-rs-pick][value="'+dark.id+'"]');
+      const radio=card.querySelector('input[data-rs-pick][value="qa-soy-brand-4"]');
       radio.click();
     });
     const swapped=await page.evaluate(()=>{
       const cart=window.NORI_DEMO.cartContents(),products=window.NORI_DEMO.products;
       return {mild:cart[products.find(p=>p.name==='Sojasauce Mild').id]||0,
-        dark:cart[products.find(p=>p.name==='Sojasauce Dunkel').id]||0,
+        replacement:cart['qa-soy-brand-4']||0,
         total:document.querySelector('#cart-count').textContent};
     });
     assert.equal(swapped.mild,0,'Old variant removed from cart');
-    assert.equal(swapped.dark,1,'Selected variant replaces it');
+    assert.equal(swapped.replacement,1,'Equivalent brand replaces it');
     assert.equal(swapped.total,'5','Cart quantity is stable after replacing a variant');
-    const brandTest=await page.evaluate(()=>{
+    await page.evaluate(()=>{
+      const mild=window.NORI_DEMO.products.find(p=>p.name==='Sojasauce Mild');
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      card.querySelector('input[data-rs-pick][value="'+mild.id+'"]').click();
       const arr=window.NORI_DEMO.products;
-      const base=arr.find(p=>p.name==='Sojasauce Mild');
-      const extra=[1,2,3,4].map(i=>({...base,id:'qa-soy-brand-'+i,name:'Marke '+i+' Sojasauce Mild',brand:'Marke '+i,price:2.99+i/10}));
-      arr.push(...extra);
-      const row=window.ASIA_RECIPE_SCANNER.analyzeText('2 EL Sojasauce')[0];
-      const candidates=window.ASIA_RECIPE_SCANNER.alternativesFor(row);
-      arr.splice(arr.length-extra.length,extra.length);
-      return {matchingBrands:candidates.filter(x=>x.sameType).length,total:candidates.length};
+      for(let i=arr.length-1;i>=0;i--)if(String(arr[i].id).startsWith('qa-soy-brand-'))arr.splice(i,1);
     });
-    assert.ok(brandTest.matchingBrands>=5,'Multiple brands of the same type are candidates');
     await page.click('#rs-manual');
     assert.equal(await page.$eval('#cart-count',e=>e.textContent),'5','Repeat analysis does not double-add items');
+    await page.evaluate(()=>{
+      document.querySelector('#rs-text').value='150 g Sushi-Reis\n20 ml Reisessig\nSalz\nZucker\n100 g Lachsfilet (roh)\nWasabipaste\n2 EL Sojasoße';
+      document.querySelector('#rs-manual').click();
+    });
+    const focusedList=await page.evaluate(()=>({
+      items:[...document.querySelectorAll('#rs-review-list .rs-result-main > strong')].map(e=>e.textContent),
+      notice:document.querySelector('#rs-summary-note').textContent
+    }));
+    assert.deepEqual(focusedList.items,['Sushi-Reis','Reisessig','Sojasoße'],'Only items carried in the shop are shown');
+    assert.match(focusedList.notice,/ausgeblendet/);
     await page.screenshot({path:path.join(root,'recipe-scanner-desktop.png'),fullPage:true});
     await load('?seite=kochideen');
     assert.ok(await page.$('.rs-ideas-link'));
@@ -122,6 +164,10 @@ const server=http.createServer((req,res)=>{
     assert.ok(dims.scroll<=dims.w+1,'Mobile no overflow: '+JSON.stringify(dims));
     await page.click('#rs-demo');
     await page.evaluate(()=>{
+      const arr=window.NORI_DEMO.products;
+      const base=arr.find(p=>p.name==='Sojasauce Mild');
+      arr.push(...[1,2,3,4].map(i=>({...base,id:'qa-mobile-soy-'+i,name:'Mobile Marke '+i+' Sojasauce Mild',brand:'Mobile Marke '+i})));
+      document.querySelector('#rs-manual').click();
       const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
       card.querySelector('.rs-more-variants').click();
     });

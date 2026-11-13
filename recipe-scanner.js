@@ -13,19 +13,22 @@
   const patternData=[
     ["Sushireis Rundkorn",/\b(sushi ?reis|sushireis|sushi rice)\b/,"high"],
     ["Reispapier Rund",/\b(reispapier|rice paper|sommerrollen ?papier)\b/,"high"],
-    ["Reisnudeln 3 mm",/\b(reis ?nudeln?|rice noodles?|vermicelli|pho nudeln?)\b/,"high"],
+    ["Reisnudeln 3 mm",/\b(reis ?nudeln?|rice noodles?)\b/,"high"],
+    ["Vermicelli Reisfäden",/\b(reisfaden|rice vermicelli|bun nudeln?)\b/,"high"],
+    ["Vermicelli Reisfäden",/^(vermicelli)$/,"possible"],
+    ["Pho Reisbandnudeln",/\b(pho ?(reis)?nudeln?|pho rice noodles?)\b/,"high"],
     ["Glasnudeln Mungbohne",/\b(glas ?nudeln?|glass noodles?)\b/,"high"],
-    ["Ramen Weizennudeln",/\b(ramen ?nudeln?|ramen noodles?)\b/,"high"],
+    ["Ramen Weizennudeln",/\b(ramen|rahmen)(?: ?(?:weizen)?nudeln?| ?noodles?)?\b/,"high"],
     ["Udon Nudeln Sanuki",/\b(udon)\b/,"high"],
     ["Soba Buchweizennudeln",/\b(soba|buchweizennudeln?)\b/,"high"],
     ["Jasminreis Premium",/\b(jasmin ?reis|jasmine rice|duft ?reis)\b/,"high"],
-    ["Jasminreis Premium",/\b(basmati ?reis|basmati rice|langkorn ?reis)\b/,"possible"],
-    ["Jasminreis Premium",/\b(reis|rice)\b/,"possible"],
+    ["Jasminreis Premium",/^(reis|rice)$/, "possible"],
     ["Nori Algenblätter",/\b(nori|sushi ?algen|algen ?blatter|seaweed sheets?)\b/,"high"],
     ["Wakame Algen Getrocknet",/\b(wakame)\b/,"high"],
     ["Kokoscreme Extra",/\b(kokos ?creme|coconut cream)\b/,"high"],
     ["Kokosmilch Cremig",/\b(kokos ?milch|coconut milk)\b/,"high"],
     ["Sojasauce Dunkel",/\b(dunkle? soja ?sauce|dark soy sauce)\b/,"high"],
+    ["Tamari Sauce",/\b(tamari(?: sauce)?)\b/,"high"],
     ["Sojasauce Mild",/\b(soja ?sauce|soja ?sosse|soja ?soße|sojasobe|soy sauce|shoyu)\b/,"high"],
     ["Sriracha Chili Sauce",/\b(sriracha|siracha)\b/,"high"],
     ["Chili Sauce Sweet",/\b(sweet chili|suss ?scharfe? chili|sweet chilli)\b/,"high"],
@@ -43,7 +46,7 @@
     ["Hoisin Sauce",/\b(hoisin)\b/,"high"],
     ["Teriyaki Sauce",/\b(teriyaki)\b/,"high"],
     ["Sesamöl Geröstet",/\b(sesam ?ol|sesame oil)\b/,"high"],
-    ["Sesam Schwarz",/\b(schwarzer? sesam|black sesame|sesamsamen|sesam)\b/,"possible"],
+    ["Sesam Schwarz",/\b(schwarzer? sesam|black sesame)\b/,"high"],
     ["Reisessig Mild",/\b(reis ?essig|rice vinegar)\b/,"high"],
     ["Mirin Würzsauce",/\b(mirin)\b/,"high"],
     ["Tamarindenpaste",/\b(tamarinden ?paste|tamarind paste)\b/,"high"],
@@ -55,11 +58,11 @@
     ["Bambussprossen Streifen",/\b(bambus ?sprossen|bamboo shoots?)\b/,"high"],
     ["Wasserkastanien Scheiben",/\b(wasser ?kastanien|water chestnuts?)\b/,"high"],
     ["Getrocknete Shiitake",/\b(getrocknete? shiitake|dried shiitake)\b/,"high"],
-    ["Getrocknete Shiitake",/\b(shiitake|pilze|mushrooms?)\b/,"possible"],
+    ["Getrocknete Shiitake",/\b(shiitake)\b/,"possible"],
     ["Edamame Geschält",/\b(edamame)\b/,"high"],
     ["Matcha Tee Everyday",/\b(matcha ?pulver|matcha powder|matcha)\b/,"possible"],
     ["Ingwer Knoblauch Paste",/\b(ingwer ?knoblauch ?paste|ginger garlic paste)\b/,"high"],
-    ["Ingwer Knoblauch Paste",/\b(ingwer|ginger|knoblauch|garlic)\b/,"possible"],
+    // Ginger-garlic paste must never substitute fresh ginger or garlic silently.
     ["Mango Püree",/\b(mango ?puree|mango puree)\b/,"high"]
   ];
   // A fresh tomato is not the same as a tomato sauce; only explicit aliases may auto-match.
@@ -68,7 +71,10 @@
     const direct=api.products.find(p=>norm(p.name)===text);
     if(direct)return {product:direct,confidence:"high"};
     const result=patternData.find(([,re])=>re.test(text));
-    const p=result&&item(result[0]);
+    const preferred=result&&item(result[0]);
+    // If a preferred brand is removed from the catalogue, use a different
+    // stocked brand only when it is the very same ingredient variety.
+    const p=preferred||(result&&sameVarietyProducts(name,result[0])[0]);
     return p?{product:p,confidence:result[2]}:{product:null,confidence:"missing"};
   }
   // Families make brands discoverable without treating different recipes or
@@ -78,18 +84,29 @@
     {ingredient:/\b(kokos ?milch|coconut milk)\b/,product:/\b(kokos ?milch|coconut milk)\b/},
     {ingredient:/\b(sushi ?reis|sushireis|sushi rice)\b/,product:/\b(sushi ?reis|sushireis|sushi rice)\b/},
     {ingredient:/\b(reis ?nudeln?|rice noodles?)\b/,product:/\b(reis ?nudeln?|rice noodles?)\b/,kind:p=>/\b3 mm\b/.test(norm(p.name))?"3mm":/\b5 mm\b/.test(norm(p.name))?"5mm":"andere"},
+    {ingredient:/\b(ramen|rahmen)\b/,product:/\b(ramen ?weizennudeln|ramen ?nudeln)\b/},
+    {ingredient:/\b(vermicelli|reisfaden|rice vermicelli|bun nudeln?)\b/,product:/\b(vermicelli reisfaden|bun reisnudeln)\b/},
+    {ingredient:/\b(pho ?(reis)?nudeln?|pho rice noodles?)\b/,product:/\bpho reisbandnudeln\b/},
     {ingredient:/\b(nori|sushi ?algen)\b/,product:/\b(nori|sushi ?algen)\b/},
-    {ingredient:/\b(reis ?essig|rice vinegar)\b/,product:/\b(reis ?essig|rice vinegar)\b/}
+    {ingredient:/\b(reis ?essig|rice vinegar)\b/,product:/\b(reis ?essig|rice vinegar)\b/},
+    {ingredient:/\b(sesam ?ol|sesame oil)\b/,product:/\b(sesam ?ol|sesame oil)\b/,kind:p=>/\b(gerostet|toasted|roasted)\b/.test(norm(p.name))?"geroestet":"natur"}
   ];
+  function sameVarietyProducts(label,productName){
+    const family=variantFamilies.find(f=>f.ingredient.test(norm(label))&&f.product.test(norm(productName)));
+    if(!family)return [];
+    const reference={name:productName};
+    const kind=family.kind?.(reference);
+    return api.products.filter(p=>family.product.test(norm(p.name))&&(!family.kind||family.kind(p)===kind));
+  }
   function alternativesFor(row){
     if(!row.product)return [];
     const family=variantFamilies.find(f=>f.ingredient.test(norm(row.label))&&f.product.test(norm(row.product.name)));
     if(!family)return [{product:row.product,sameType:true}];
     const selectedType=family.kind?.(row.product);
-    const others=api.products.filter(p=>p.id!==row.product.id&&family.product.test(norm(p.name))).map(p=>({
-      product:p,sameType:!family.kind||family.kind(p)===selectedType
+    const others=api.products.filter(p=>p.id!==row.product.id&&family.product.test(norm(p.name))&&(!family.kind||family.kind(p)===selectedType)).map(p=>({
+      product:p,sameType:true
     }));
-    others.sort((a,b)=>Number(b.sameType)-Number(a.sameType)||Number((b.product.demoStock??99)>0)-Number((a.product.demoStock??99)>0)||Number(a.product.price)-Number(b.product.price));
+    others.sort((a,b)=>Number((b.product.demoStock??99)>0)-Number((a.product.demoStock??99)>0)||Number(a.product.price)-Number(b.product.price));
     return [{product:row.product,sameType:true},...others];
   }
   function number(s){
@@ -175,12 +192,19 @@
     const stock=row.product?.demoStock??99;
     return {count:Math.min(99,Math.max(1,count)),precision,available:stock>0&&count<=stock,stock};
   }
+  function preferAvailableEquivalent(row){
+    if(!row.product||calculate(row).available)return row;
+    // Change brands or pack sizes, but never flavor, ingredient variety, or
+    // prepared-vs-raw product type. Anything else stays out of the shop list.
+    const replacement=alternativesFor(row).slice(1).find(v=>v.sameType&&calculate({...row,product:v.product}).available);
+    return replacement?{...row,product:replacement.product}:row;
+  }
   function analyzeText(input){
     const lines=String(input||"").slice(0,5000).split(/\r?\n/);
     const out=[];
     for(const line of lines){
       if(/^(zubereitung|anleitung|instructions|schritte|method)\b/i.test(norm(line)))break;
-      const row=parseLine(line);if(row)out.push({...row,...calculate(row)});
+      const row=parseLine(line);if(row){const available=preferAvailableEquivalent(row);out.push({...available,...calculate(available)});}
       if(out.length>=30)break;
     }
     return out;
@@ -220,22 +244,20 @@
     return row.q!=null?String(row.q).replace(".",",")+(row.unit?" "+row.unit:""):"Menge nicht genannt";
   }
   function renderVariants(row,index){
-    const all=alternativesFor(row);
+    const all=alternativesFor(row).filter(v=>calculate({...row,product:v.product}).available);
     if(all.length<=1)return "";
-    // Keep only the recommendation and up to two equivalent products visible.
-    // Different varieties are never presented as equally safe substitutions.
-    const visible=[all[0],...all.slice(1).filter(v=>v.sameType).slice(0,2)];
+    // Only identical ingredient varieties; keep the choice quick and calm.
+    const visible=all.slice(0,3);
     const extra=all.slice(1).filter(v=>!visible.includes(v));
     const expanded=state.expandedVariants.has(index);
     const option=v=>{
       const p=v.product,plan=calculate({...row,product:p});
       const selected=p.id===row.product.id;
-      const incompatible=!v.sameType;
       const unavailable=!plan.available;
       const disabled=unavailable||(row.added&&!row.addedCount);
-      return '<label class="rs-variant-option'+(selected?' selected':'')+(incompatible?' different':'')+'">'+
+      return '<label class="rs-variant-option'+(selected?' selected':'')+'">'+
         '<input type="radio" name="rs-product-'+index+'" data-rs-pick="'+index+'" value="'+safe(p.id)+'"'+(selected?' checked':'')+(disabled?' disabled':'')+'>'+
-        '<span class="rs-variant-info"><strong>'+safe(p.name)+'</strong><small>'+safe(p.brand?String(p.brand)+' · ':'')+safe(p.size)+' · '+plan.count+' Packung'+(plan.count===1?'':'en')+(incompatible?' · Andere Sorte':'')+(unavailable?' · Nicht verfügbar':'')+'</small></span>'+
+        '<span class="rs-variant-info"><strong>'+safe(p.name)+'</strong><small>'+safe(p.brand?String(p.brand)+' · ':'')+safe(p.size)+' · '+plan.count+' Packung'+(plan.count===1?'':'en')+'</small></span>'+
         '<strong class="rs-variant-price">'+money(Number(p.price)*plan.count)+'</strong></label>';
     };
     return '<fieldset class="rs-variants"><legend>Produkt auswählen</legend>'+visible.map(option).join('')+
@@ -246,13 +268,13 @@
   function renderRows(){
     const slot=$("#rs-results");if(!slot)return;
     if(!state.rows.length){slot.hidden=true;return;}
+    const availableRows=state.rows.map((row,index)=>({row,index})).filter(({row})=>row.product&&row.available);
     slot.hidden=false;
-    const added=state.rows.filter(r=>r.added).length;
-    const missing=state.rows.filter(r=>!r.product).length;
-    const possible=state.rows.filter(r=>r.product&&r.confidence!=="high").length;
-    $("#rs-summary").textContent=state.rows.length+" Zutatenzeilen · "+added+" im Warenkorb · "+missing+" nicht im Demo-Sortiment";
-    $("#rs-review-list").innerHTML=state.rows.map((r,i)=>{
-      if(!r.product)return '<article class="rs-result missing"><div class="rs-result-icon">?</div><div class="rs-result-main"><strong>'+safe(r.label)+'</strong><small>'+safe(describeAmount(r))+' · Im Demo-Sortiment nicht gefunden</small></div><span class="rs-status">Nicht verfügbar</span></article>';
+    const added=availableRows.filter(({row})=>row.added).length;
+    const possible=availableRows.filter(({row})=>row.confidence!=="high").length;
+    const omitted=state.rows.length-availableRows.length;
+    $("#rs-summary").textContent=availableRows.length+" verfügbare Shopartikel · "+added+" im Warenkorb";
+    $("#rs-review-list").innerHTML=availableRows.length?availableRows.map(({row:r,index:i})=>{
       const caution=r.confidence==="possible"?"Ähnlicher Artikel – bitte prüfen":"Passender Artikel";
       const quantity=r.precision==="calculated"?"Packungsgröße berechnet":"1 Packung geschätzt bzw. Stückangabe";
       const stockWarning=!r.available?' · Nicht ausreichend Demo-Bestand':'';
@@ -260,9 +282,9 @@
       '<div class="rs-result-icon" aria-hidden="true">'+safe(r.product.emoji)+'</div><div class="rs-result-main"><strong>'+safe(r.label)+'</strong><small>'+safe(r.product.name)+' · '+safe(r.product.size)+'</small><small>'+safe(describeAmount(r))+' → <b>'+r.count+' × '+safe(r.product.size)+'</b> · '+safe(quantity)+safe(stockWarning)+'</small>'+renderVariants(r,i)+'</div>'+
       '<div class="rs-result-end"><strong>'+money(r.product.price*r.count)+'</strong>'+
       (r.added?'<span class="rs-added">✓ Im Warenkorb</span>':'<label class="rs-select"><input type="checkbox" data-rs-choose="'+i+'" '+((r.confidence==="high"||r.userSelected)&&r.available?'checked':'')+(r.available?'':' disabled')+'> '+safe(caution)+'</label>')+'</div></article>';
-    }).join("");
-    $("#rs-add").disabled=!state.rows.some(r=>r.product&&!r.added&&r.available);
-    $("#rs-summary-note").textContent=possible?possible+" ähnliche Treffer werden nicht automatisch übernommen.":"Mengen und Zutaten vor einer echten Bestellung immer prüfen.";
+    }).join(""):'<p class="rs-empty">Zu diesem Rezept haben wir gerade keine passenden Shopartikel. Es werden keine unpassenden Ersatzprodukte vorgeschlagen.</p>';
+    $("#rs-add").disabled=!availableRows.some(({row})=>!row.added);
+    $("#rs-summary-note").textContent=(possible?possible+" Treffer bitte vor dem Hinzufügen prüfen. ":"")+(omitted?"Nicht angebotene Zutaten werden ausgeblendet. Bitte das Originalrezept für die vollständige Einkaufsliste prüfen.":"Mengen und Zutaten vor einer echten Bestellung immer prüfen.");
   }
   function chooseVariant(index,id){
     const row=state.rows[index];if(!row||!row.product)return;
@@ -278,11 +300,11 @@
       row.addedCount=plan.count;
     }
     row.product=choice.product;
-    row.confidence=choice.sameType?row.baseConfidence:"possible";
+    row.confidence=row.baseConfidence;
     row.userSelected=true;
     Object.assign(row,plan);
     renderRows();
-    setNotice(row.added?"Produkt im Warenkorb durch deine Auswahl ersetzt.":choice.sameType?"Produktvariante ausgewählt.":"Andere Produktsorte gewählt. Bitte prüfen, ob sie zum Rezept passt.",choice.sameType?"success":"info");
+    setNotice(row.added?"Produkt im Warenkorb durch deine Auswahl ersetzt.":"Gleichwertige Produktvariante ausgewählt.","success");
   }
   function runAnalysis(text,fromImage=false,allowAuto=true){
     const previousText=state.raw,previousRows=state.rows;

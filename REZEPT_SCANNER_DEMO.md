@@ -8,8 +8,10 @@
 - Alternativ kann eine Zutatenliste direkt eingefügt oder der erkannte OCR-Text bearbeitet werden.
 - Bei vollständigen Rezeptseiten liest die OCR Wortpositionen (TSV) und identifiziert gezielt den Bereich unter **„Zutaten“**. Zubereitungsspalten, Navigation, Werbetexte und „Jetzt bestellen“-Schaltflächen werden nicht als Zutaten übernommen.
 - Wird kein eindeutiger Zutatenbereich erkannt, bleibt der Warenkorb unverändert. Der Nutzer kann einen enger auf die Zutatenliste zugeschnittenen Screenshot verwenden oder die Zutaten im Textfeld korrigieren.
-- Der Scanner ordnet Zutaten anhand konservativer, kuratierter Namen/Synonyme den 150 fiktiven Shop-Artikeln zu. Unsichere Vorschläge und nicht verfügbare Zutaten werden getrennt angezeigt.
-- Bei mehreren passenden Marken bzw. Packungen werden höchstens drei gleichartige Produkte unmittelbar sichtbar. **„Weitere Produkte“** öffnet die übrigen Varianten erst auf Wunsch; abweichende Sorten sind ausdrücklich als solche gekennzeichnet und werden nicht stillschweigend gleichgesetzt.
+- Der Scanner ordnet Zutaten anhand konservativer, kuratierter Synonyme den 150 fiktiven Shop-Artikeln zu: z. B. **Ramen/Rahmen → Ramen-Weizennudeln**, **Pho-Nudeln → Pho-Reisbandnudeln**, **Reisessig → Reisessig Mild**. Marken müssen nicht genauso heißen wie die Zutat im Rezept.
+- Die Einkaufsliste zeigt **ausschließlich angebotene, in der benötigten Menge verfügbare Produkte**. Salz, Zucker, Fleisch, frische Kräuter usw. verschwinden als Nicht-Shopartikel aus der Ergebnisliste. Ein kurzer Hinweis erinnert daran, dass das Originalrezept weitere Zutaten enthalten kann.
+- Ist die erste Wahl vergriffen oder unter einem anderen Markennamen gelistet, wird nach derselben Zutatenart gesucht. **Nur kulinarisch gleichwertige Marken derselben Sorte** werden vorgeschlagen: milde Sojasauce wird nicht durch dunkle Sojasauce oder Tamari ersetzt; Jasminreis nicht durch Basmati; Ingwer nicht durch Ingwer-Knoblauch-Paste; frische Pilze nicht durch getrocknete Shiitake.
+- Bei mehreren tatsächlich passenden Marken bzw. Packungen werden höchstens drei gleichartige Produkte unmittelbar sichtbar. **„Weitere Produkte“** öffnet übrige geeignete Produkte erst auf Wunsch. Gibt es keine gleichwertige Alternative, wird keine behauptet.
 - Ein Wechsel der ausgewählten Variante aktualisiert im Demo-Warenkorb nur die zuvor vom Scanner hinzugefügte Menge und vermeidet doppelte Artikel. Bereits vorhandene eigene Warenkorbpositionen bleiben erhalten.
 - Bei Gramm/Millilitern wird die benötigte **Anzahl ganzer Packungen** aufgerundet (z. B. 800 ml Kokosmilch bei 400-ml-Dosen = 2 Dosen). Bei EL/TL oder fehlenden Mengen wird eine Packung **als Schätzung** vorgeschlagen.
 - Sichere verfügbare Treffer werden standardmäßig sofort in den lokalen Demo-Warenkorb übernommen. Der Automatismus lässt sich vor dem Scan abschalten. Eine unveränderte Zutatenliste wird nicht mehrfach automatisch hinzugefügt.
@@ -19,7 +21,7 @@
 
 - Die Erkennung hängt von Auflösung, Sprache, Schrift und Qualität des Screenshots ab. OCR-Ergebnisse können Fehler enthalten; der Text ist editierbar.
 - Seiten mit mehreren Zutatenbereichen, außergewöhnlichem Layout oder fehlender Zutatenüberschrift benötigen eventuell einen zugeschnittenen Screenshot. Die visuelle Spaltenerkennung ist eine konservative Heuristik und keine vollständige semantische KI-Bildanalyse.
-- Das Demo-Sortiment enthält nur 150 fiktive Artikel. Frische Kräuter, Gemüse, Fleisch und andere Zutaten fehlen teils. Diese Artikel werden **nicht durch unpassende Waren ersetzt**.
+- Das Demo-Sortiment enthält nur 150 fiktive Artikel. Frische Kräuter, Gemüse, Fleisch und andere Zutaten fehlen teils. Diese Artikel werden **nicht durch unpassende Waren ersetzt** und erscheinen nicht als leere Produktkacheln. Die Vollständigkeit des Originalrezepts wird nicht zugesichert.
 - Mengen in Löffeln, Stück oder Packungen sind ohne produktspezifische Umrechnungsregeln nicht auf ein exaktes Gewicht bzw. Volumen umrechenbar.
 - Bereits vorhandene Warenkorbartikel bleiben erhalten. Der Scanner ergänzt zusätzliche Mengen.
 - Nutzer sollten Produktzutaten, Allergene, Kühlhinweise und tatsächlich benötigte Mengen vor einer echten Bestellung prüfen.
@@ -27,9 +29,7 @@
 
 ## Prüfung
 
-`node recipe-scanner-qa.cjs` startet einen lokalen Test-Webserver und prüft Parsing, Packungsrechnung, Demo-Warenkorb, Verhinderung doppelter Übernahme, kompakte Produktalternativen, gezieltes Aufklappen, Variantenwechsel, mobile Breite und echte OCR-Erkennung eines generierten Bildes. Der Test stellt sicher, dass beim OCR-Lauf keine Drittanbieter-Anfragen abgehen.
-
-`node qa.cjs` prüft die fünf bestehenden Shop-Testgruppen auf Regressionen.
+`node recipe-scanner-qa.cjs` startet einen lokalen Test-Webserver und prüft Parsing, Synonyme, Ausschluss nicht angebotener Artikel, geschmacklich gleichwertige Marken, Vorrats-Fallback, Packungsrechnung, Demo-Warenkorb, Verhinderung doppelter Übernahme, kompakte Produktalternativen, Aufklappen, Variantenwechsel, mobile Breite und echte OCR-Erkennung eines generierten Bildes. Der Test stellt sicher, dass beim OCR-Lauf keine Drittanbieter-Anfragen abgehen.
 
 ## Bibliotheken & Lizenzen
 
