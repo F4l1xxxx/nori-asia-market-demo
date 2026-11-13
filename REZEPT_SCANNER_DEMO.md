@@ -4,6 +4,8 @@
 
 - Seite: `?seite=rezeptscanner`, zusätzlicher Einstieg über Shop-Navigation, Homepage und Kochideen.
 - Per Drag & Drop, Dateiauswahl oder Einfügen aus der Zwischenablage werden Rezept-Screenshots angenommen (PNG, JPEG, WEBP, BMP, bis 10 MB).
+- **„Bild entfernen“** löscht ein versehentlich hochgeladenes Bild samt OCR-Text und Scanner-Ergebnis. Ein noch laufender OCR-Vorgang wird abgebrochen bzw. entwertet, damit er die leere Ansicht nicht erneut befüllt. Bereits gewählte Warenkorbpositionen bleiben bewusst erhalten.
+- Die Rezeptsuche kann eine gefundene Zutatenliste per einmaliger Browser-Sitzungsübergabe an den Scanner weiterreichen; danach gelten die üblichen Verfügbarkeits-, Synonym- und Mengenregeln.
 - Tesseract.js 7 mit deutschen und englischen Sprachdaten führt OCR im Browser durch. Alle Assets werden von der eigenen Demo-Seite geladen; die Bilder werden nicht an Drittdienste gesendet.
 - Alternativ kann eine Zutatenliste direkt eingefügt oder der erkannte OCR-Text bearbeitet werden.
 - Bei vollständigen Rezeptseiten liest die OCR Wortpositionen (TSV) und identifiziert gezielt den Bereich unter **„Zutaten“**. Zubereitungsspalten, Navigation, Werbetexte und „Jetzt bestellen“-Schaltflächen werden nicht als Zutaten übernommen.
@@ -29,7 +31,7 @@
 
 ## Prüfung
 
-`node recipe-scanner-qa.cjs` startet einen lokalen Test-Webserver und prüft Parsing, Synonyme, Ausschluss nicht angebotener Artikel, geschmacklich gleichwertige Marken, Vorrats-Fallback, Packungsrechnung, Demo-Warenkorb, Verhinderung doppelter Übernahme, kompakte Produktalternativen, Aufklappen, Variantenwechsel, mobile Breite und echte OCR-Erkennung eines generierten Bildes. Der Test stellt sicher, dass beim OCR-Lauf keine Drittanbieter-Anfragen abgehen.
+`node recipe-scanner-qa.cjs` startet einen lokalen Test-Webserver und prüft Parsing, Synonyme, Ausschluss nicht angebotener Artikel, geschmacklich gleichwertige Marken, Vorrats-Fallback, Packungsrechnung, Demo-Warenkorb, Verhinderung doppelter Übernahme, kompakte Produktalternativen, Aufklappen, Variantenwechsel, mobile Breite und echte OCR-Erkennung eines generierten Bildes. Der Test stellt sicher, dass beim OCR-Lauf keine Drittanbieter-Anfragen abgehen. Der ergänzende Test `node recipe-discovery-qa.cjs` prüft Rezeptübergabe, Bildentfernung und kontextbezogene Warenkorbempfehlungen.
 
 ## Bibliotheken & Lizenzen
 

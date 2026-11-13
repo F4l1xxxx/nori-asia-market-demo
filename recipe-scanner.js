@@ -9,11 +9,13 @@
   const norm=s=>String(s??"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/ß/g,"ss").toLocaleLowerCase("de").replace(/[^a-z0-9]+/g," ").trim();
   const money=n=>api.formatMoney(Number(n)||0);
   const item=name=>api.products.find(p=>norm(p.name)===norm(name));
-  const state={rows:[],busy:false,preview:null,source:"",raw:"",imported:new Set(),expandedVariants:new Set()};
+  const state={rows:[],busy:false,preview:null,source:"",raw:"",imported:new Set(),expandedVariants:new Set(),scanToken:0,activeWorker:null};
   const patternData=[
     ["Sushireis Rundkorn",/\b(sushi ?reis|sushireis|sushi rice)\b/,"high"],
+    ["Klebreis für Mango Sticky Rice",/\b(klebreis|sticky rice|glutinous rice)\b/,"high"],
     ["Reispapier Rund",/\b(reispapier|rice paper|sommerrollen ?papier)\b/,"high"],
     ["Reisnudeln 3 mm",/\b(reis ?nudeln?|rice noodles?)\b/,"high"],
+    ["Pad Thai Reisbandnudeln",/\b(pad thai ?(reisband)?nudeln?|pad thai rice noodles?)\b/,"high"],
     ["Vermicelli Reisfäden",/\b(reisfaden|rice vermicelli|bun nudeln?)\b/,"high"],
     ["Vermicelli Reisfäden",/^(vermicelli)$/,"possible"],
     ["Pho Reisbandnudeln",/\b(pho ?(reis)?nudeln?|pho rice noodles?)\b/,"high"],
@@ -228,6 +230,22 @@
     $("#rs-progress").setAttribute("aria-valuenow",String(n));
     if(label)$("#rs-progress-label").textContent=label;
   }
+  function clearUploadedImage(){
+    // Invalidate an in-progress OCR run: it must not write its old results back.
+    state.scanToken++;
+    if(state.activeWorker)state.activeWorker.terminate().catch(()=>{});
+    state.activeWorker=null;
+    if(state.preview)URL.revokeObjectURL(state.preview);
+    state.preview=null;state.raw="";state.rows=[];state.source="";
+    state.expandedVariants.clear();
+    $("#rs-file").value="";
+    $("#rs-preview").removeAttribute("src");
+    $("#rs-upload-preview").hidden=true;
+    $("#rs-file-name").textContent="";
+    $("#rs-text").value="";
+    renderRows();setBusy(false);
+    setNotice("Bild und erkannte Zutaten entfernt. Bereits übernommene Warenkorbartikel bleiben erhalten; du kannst sie dort ändern.","info");
+  }
   function applyRows(rows){
     let added=0,packages=0;
     for(const row of rows){
@@ -340,9 +358,11 @@
   async function processFile(file){
     if(state.busy||!file)return;
     if(!/^image\/(png|jpeg|webp|bmp)$/i.test(file.type)||file.size>10*1024*1024){setNotice("Bitte ein PNG-, JPG-, WEBP- oder BMP-Bild mit maximal 10 MB wählen.","warn");return;}
+    const token=++state.scanToken;
     if(state.preview)URL.revokeObjectURL(state.preview);
     state.preview=URL.createObjectURL(file);
     const preview=$("#rs-preview");preview.src=state.preview;preview.hidden=false;
+    $("#rs-upload-preview").hidden=false;
     $("#rs-file-name").textContent=file.name+" · "+(file.size/1024/1024).toFixed(1).replace(".",",")+" MB";
     setBusy(true,"Screenshot wird im Browser gelesen – keine Bildübertragung an einen Server.");
     setProgress(3,"Bilderkennung wird vorbereitet …");
@@ -361,8 +381,11 @@
           setProgress(Math.max(5,Math.min(95,p*90)),stage);
         }
       });
+      if(token!==state.scanToken)return;
+      state.activeWorker=worker;
       setProgress(55,"Text wird aus dem Screenshot gelesen …");
       const data=await worker.recognize(file,{}, {text:true,tsv:true});
+      if(token!==state.scanToken)return;
       setProgress(100,"Texterkennung abgeschlossen");
       const focused=extractIngredientsFromLayout(data?.data);
       if(focused.focused){
@@ -375,10 +398,11 @@
         setNotice("Zutatenbereich nicht sicher gefunden. Bitte Screenshot auf die Zutatenliste zuschneiden oder nur die Zutaten rechts ins Textfeld kopieren. Es wurde nichts in den Warenkorb gelegt.","warn");
       }
     }catch(err){
-      setNotice("Die automatische Bilderkennung hat hier nicht funktioniert. Du kannst die Zutaten unten als Text einfügen. ("+String(err.message||err).slice(0,110)+")","warn");
+      if(token===state.scanToken)setNotice("Die automatische Bilderkennung hat hier nicht funktioniert. Du kannst die Zutaten unten als Text einfügen. ("+String(err.message||err).slice(0,110)+")","warn");
     }finally{
       if(worker)await worker.terminate().catch(()=>{});
-      setBusy(false);
+      if(state.activeWorker===worker)state.activeWorker=null;
+      if(token===state.scanToken)setBusy(false);
     }
   }
   function scannerView(){
@@ -390,7 +414,7 @@
       <section class="rs-hero"><div><span class="demo-label">NEU · REZEPT ZU WARENKORB · LOKALE DEMO</span><h1>Du hast das Rezept.<br><em>Wir finden die Zutaten.</em></h1><p>Screenshot hineinziehen, Zutaten erkennen lassen und passende Packungsgrößen direkt im Warenkorb finden. Ohne langes Suchen.</p><div class="rs-steps"><span><b>01</b> Screenshot</span><span><b>02</b> Mengenabgleich</span><span><b>03</b> Warenkorb</span></div></div><div class="rs-hero-art" aria-hidden="true"><span>📷</span><i>→</i><span>🥥</span><i>+</i><span>🍜</span><i>→</i><span>🛒</span></div></section>
       <section class="rs-workspace"><div class="rs-left"><div class="rs-subhead"><span>01 / DEIN REZEPT</span><h2>Screenshot hochladen</h2></div>
         <div id="rs-drop" class="rs-drop" tabindex="0" role="button" aria-label="Rezeptbild auswählen oder hier ablegen"><span class="rs-drop-illustration">📸</span><strong>Bild hier ablegen</strong><p>oder klicke, um einen Screenshot auszuwählen</p><small>PNG, JPG, WEBP oder BMP · bis 10 MB · auch per Strg + V</small><input id="rs-file" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" hidden></div>
-        <img id="rs-preview" class="rs-preview" alt="Vorschau deines Rezept-Screenshots" hidden><p id="rs-file-name" class="rs-file-name"></p>
+        <div id="rs-upload-preview" class="rs-upload-preview" hidden><img id="rs-preview" class="rs-preview" alt="Vorschau deines Rezept-Screenshots" hidden><div class="rs-upload-info"><p id="rs-file-name" class="rs-file-name"></p><button id="rs-remove-preview" class="rs-remove-preview" type="button" aria-label="Hochgeladenes Rezeptbild entfernen">✕ Bild entfernen</button></div></div>
         <label class="rs-autofill"><input id="rs-autofill" type="checkbox" checked><span><strong>Eindeutige Zutaten direkt übernehmen</strong><small>Bei unsicheren Treffern wird erst gefragt. Keine Bestellung wird ausgelöst.</small></span></label>
         <div id="rs-progress-wrap" class="rs-progress-wrap" hidden><div class="rs-progress-track"><div id="rs-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div><small id="rs-progress-label" aria-live="polite">Erkennung wird gestartet …</small></div>
       </div><div class="rs-right"><div class="rs-subhead"><span>ALTERNATIVE / KORRIGIEREN</span><h2>Zutaten als Text</h2></div><p>Falls ein Screenshot schlecht lesbar ist, kannst du den erkannten Text korrigieren oder Zutaten direkt einfügen – eine pro Zeile.</p><textarea id="rs-text" rows="9" placeholder="800 ml Kokosmilch&#10;250 g Reisnudeln&#10;2 EL Sojasauce&#10;1 Zwiebel" aria-label="Zutatenliste als Text"></textarea><div class="rs-button-row"><button id="rs-manual" class="market-button" type="button">Zutaten abgleichen ↗</button><button id="rs-demo" class="rs-ghost" type="button">Beispiel ausprobieren</button></div><p class="rs-privacy">🔒 Die Bildanalyse läuft auf deinem Gerät. Screenshot und Zutaten werden nicht hochgeladen oder gespeichert.</p></div></section>
@@ -401,6 +425,7 @@
     $("#rs-drop").addEventListener("click",e=>{if(e.target.id!=="rs-file")$("#rs-file").click()});
     $("#rs-drop").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("#rs-file").click()}});
     $("#rs-file").addEventListener("change",e=>processFile(e.target.files?.[0]));
+    $("#rs-remove-preview").addEventListener("click",clearUploadedImage);
     $("#rs-drop").addEventListener("dragover",e=>{e.preventDefault();e.dataTransfer.dropEffect="copy";e.currentTarget.classList.add("drag-over")});
     $("#rs-drop").addEventListener("dragleave",e=>{e.currentTarget.classList.remove("drag-over")});
     $("#rs-drop").addEventListener("drop",e=>{e.preventDefault();e.currentTarget.classList.remove("drag-over");processFile([...e.dataTransfer.files].find(f=>f.type.startsWith("image/")))});
@@ -424,6 +449,18 @@
       const rows=state.rows.filter((r,i)=>!r.added&&$("[data-rs-choose='"+i+"']")?.checked);
       const done=applyRows(rows);if(done.added)state.imported.add(norm(state.raw));renderRows();setNotice(done.added?"✓ "+done.packages+" weitere Packungen in den Demo-Warenkorb gelegt.":"Bitte wähle einen verfügbaren Artikel aus.",done.added?"success":"warn");
     });
+    // Recipe cards pass a one-time shopping list in browser-local session state.
+    // No ingredient list is sent through URL parameters or to an external server.
+    try{
+      const saved=sessionStorage.getItem("asia-market-recipe-import-v1");
+      if(saved){
+        sessionStorage.removeItem("asia-market-recipe-import-v1");
+        const data=JSON.parse(saved);
+        if(typeof data.text==="string"&&data.text.length<=5000&&Date.now()-Number(data.at||0)<10*60*1000){
+          runAnalysis(data.text,false,true);
+        }
+      }
+    }catch{ /* Session storage may be unavailable in strict browser settings. */ }
   }
   function promo(){
     const nav=$(".store-nav .nav-inner");

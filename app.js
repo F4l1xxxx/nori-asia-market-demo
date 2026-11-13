@@ -279,8 +279,25 @@ function complementaryProducts(seed){
  const selection=terms.map(t=>products.find(p=>p.name===t)).filter(p=>p&&p.id!==seed?.id&&p.demoStock!==0);
  return [...new Map(selection.map(p=>[p.id,p])).values()].slice(0,4);
 }
-function recommendation(seed){
- return complementaryProducts(seed).find(p=>!cart[p.id])||products.find(p=>p.category!=="Reis & Nudeln"&&!cart[p.id]&&p.demoStock!==0);
+function recommendation(){
+ // Decide from the entire basket, not the last item. A generic rice or
+ // condiment purchase is not evidence of a curry, sushi, or dessert recipe.
+ const names=Object.keys(cart).filter(id=>cart[id]>0).map(id=>(byId(id)?.name||"").toLowerCase());
+ const contains=re=>names.some(name=>re.test(name));
+ let suitable=[];
+ if(contains(/sushi(reis)?|sushireis|nori algen/)){
+   suitable=["Sushireis Rundkorn","Nori Algenblätter","Reisessig Mild","Sojasauce Mild"];
+ }else if(contains(/grüne currypaste|rote currypaste|gelbe currypaste|panang currypaste/)){
+   suitable=["Kokosmilch Cremig","Jasminreis Premium","Fischsauce"];
+ }else if(contains(/ramen weizennudeln/)){
+   suitable=["Miso Paste Weiß","Dashi Brühe Basis","Sesamöl Geröstet"];
+ }else if(contains(/gyoza|mandu|dim sum|dumpling|frühlingsrollen/)){
+   suitable=["Sojasauce Mild","Reisessig Mild","Sesamöl Geröstet"];
+ }else if(contains(/mochi|pocky|reiskekse/)){
+   suitable=["Matcha Tee Everyday","Jasmin Grüntee"];
+ }
+ return suitable.map(name=>products.find(p=>p.name===name))
+   .find(p=>p&&p.demoStock!==0&&!cart[p.id])||null;
 }
 function renderCart(){
  const container=$("#cart-content"),footer=$("#cart-footer");
@@ -293,7 +310,7 @@ function renderCart(){
  const p=byId(id);
  return '<div class="cart-item"><div class="cart-thumb" aria-hidden="true">'+p.emoji+'</div><div><strong>'+safe(p.name)+'</strong><small>'+safe(p.size)+' · '+safe(p.origin)+'</small><div class="qty-row"><button data-qty="'+id+'" data-n="-1" aria-label="Menge reduzieren">−</button><span>'+qty+'</span><button data-qty="'+id+'" data-n="1" aria-label="Menge erhöhen">+</button></div></div><span class="cart-item-price">'+money(p.price*qty)+'</span></div>';
  }).join("");
- const rec=recommendation(byId(entries[entries.length-1][0]));
+ const rec=recommendation();
  if(rec)container.innerHTML+='<div class="cart-recommendation"><div class="cart-rec-eyebrow">PASST GUT DAZU</div><div class="cart-item"><div class="cart-thumb">'+rec.emoji+'</div><div><strong>'+safe(rec.name)+'</strong><small>'+safe(rec.size)+'</small></div><button class="add-btn" data-add="'+rec.id+'" aria-label="'+safe(rec.name)+' hinzufügen">+</button></div></div>';
  const s=discounted();
  const diff=Math.max(0,49-s);
