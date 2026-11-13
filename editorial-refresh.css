@@ -116,8 +116,8 @@ body.market #worlds .country-eyebrow{position:relative;z-index:1;font-size:9px;f
 body.market #worlds .country-card strong{font-size:29px;font-weight:760;line-height:1.13;letter-spacing:-.047em;margin:0 0 8px;color:#fff;position:relative;z-index:1;text-shadow:0 2px 12px #1029204d}
 body.market #worlds .country-card small{font-size:12px;font-weight:500;line-height:1.5;color:#ffffffdb;opacity:1;text-shadow:0 1px 7px #0b231bcc}
 body.market #worlds .country-card b{display:inline-flex;align-items:center;gap:13px;font-size:11px;font-weight:700;letter-spacing:.015em;color:#fff;margin-top:21px;padding:0 0 5px;border-bottom:1px solid #ffffff9e;text-shadow:0 1px 5px #0b231b77}
-body.market #worlds .country-card b span{font-size:15px;line-height:1;transition:transform .2s}
-body.market #worlds .country-card:hover b span{transform:translate(2px,-2px)}
+body.market #worlds .country-card b span{display:inline-block;width:8px;height:8px;font-size:0;line-height:0;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);margin-left:2px;transition:transform .2s}
+body.market #worlds .country-card:hover b span{transform:translateX(2px) rotate(45deg)}
 body.market #worlds .country-japan{background-image:linear-gradient(180deg,#12291f18 0%,#12291f4d 44%,#0b211de9 100%),url("./assets/real/sushi-rolls.jpg")}
 body.market #worlds .country-korea{background-image:linear-gradient(180deg,#12291f1a 0%,#12291f4d 44%,#0b211de9 100%),url("./assets/real/korean-bibimbap.jpg")}
 body.market #worlds .country-thai{background-image:linear-gradient(180deg,#12291f15 0%,#12291f4d 44%,#0b211de9 100%),url("./assets/real/thai-curry.jpg")}
