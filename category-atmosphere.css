@@ -1,0 +1,191 @@
+/* ASIA MART — ruhige visuelle Akzente für Marktregale, Länder und Kochideen.
+   Dekoration nur, alle Navigationen und Texte bleiben unverändert. */
+
+/* Ein eigenes Regalgefühl je Warengruppe */
+body.market .category-card {
+  --cat-soft:#fff9f1;
+  background:linear-gradient(155deg,#fff 52%,var(--cat-soft))!important;
+  border-color:#e7e6dd;
+  box-shadow:0 7px 21px #2235240b;
+  transition:transform .25s cubic-bezier(.2,.75,.25,1),box-shadow .25s,border-color .25s;
+}
+body.market .category-card:hover,
+body.market .category-card:focus-visible {
+  transform:translateY(-4px);
+  box-shadow:0 13px 30px #243b2720;
+  border-color:#d4d9c8;
+}
+body.market .category-card .category-image {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:radial-gradient(circle at 88% 27%,#fff9 0 18%,transparent 19%),
+    radial-gradient(circle at 12% 98%,#fff8 0 29%,transparent 30%),
+    linear-gradient(135deg,var(--cat-a,#f7eacb),var(--cat-b,#f4d4a5));
+}
+body.market .category-card .category-image::before {
+  content:"";
+  position:absolute;
+  width:148px;height:148px;
+  right:-70px;top:-83px;
+  border:16px solid #ffffff51;
+  border-radius:50%;
+  pointer-events:none;
+}
+body.market .category-card .category-image::after {
+  content:"";
+  position:absolute;
+  width:130px;height:130px;
+  left:-65px;bottom:-100px;
+  border:1px dashed #ffffff98;
+  border-radius:50%;
+  pointer-events:none;
+}
+body.market .category-card .cat-emoji {
+  position:relative;z-index:1;
+  transform:rotate(-5deg);
+  transition:transform .3s cubic-bezier(.18,.72,.2,1);
+}
+body.market .category-card:hover .cat-emoji,
+body.market .category-card:focus-visible .cat-emoji {
+  transform:translateY(-3px) rotate(3deg) scale(1.09);
+}
+body.market .category-card:nth-child(1){--cat-a:#fff0c0;--cat-b:#f7c77f;--cat-soft:#fff7e6}
+body.market .category-card:nth-child(2){--cat-a:#ffe2ca;--cat-b:#f5ae92;--cat-soft:#fff2ec}
+body.market .category-card:nth-child(3){--cat-a:#fce6ec;--cat-b:#e9bdd1;--cat-soft:#fff4f7}
+body.market .category-card:nth-child(4){--cat-a:#e9f3f6;--cat-b:#afcddd;--cat-soft:#f0f8fb}
+body.market .category-card:nth-child(5){--cat-a:#e4f4d9;--cat-b:#b8dcb0;--cat-soft:#f1f8ed}
+body.market .category-card:nth-child(6){--cat-a:#f6e9cd;--cat-b:#dbca9b;--cat-soft:#fbf6e7}
+body.market .category-card:nth-child(1) .category-image{
+  background:repeating-radial-gradient(ellipse at 87% 115%,#fff7 0 2px,transparent 3px 13px),linear-gradient(135deg,var(--cat-a),var(--cat-b));
+}
+body.market .category-card:nth-child(2) .category-image{
+  background:radial-gradient(ellipse at 77% 6%,#fff9 0 13%,transparent 14%),radial-gradient(ellipse at 13% 110%,#cf645126 0 35%,transparent 36%),linear-gradient(135deg,var(--cat-a),var(--cat-b));
+}
+body.market .category-card:nth-child(3) .category-image{
+  background:radial-gradient(circle at 23% 12%,#fff9 0 8%,transparent 9%),radial-gradient(circle at 88% 84%,#fff7 0 24%,transparent 25%),linear-gradient(135deg,var(--cat-a),var(--cat-b));
+}
+body.market .category-card:nth-child(4) .category-image{
+  background:repeating-linear-gradient(125deg,transparent 0 22px,#fff4 23px 24px,transparent 25px 47px),linear-gradient(135deg,var(--cat-a),var(--cat-b));
+}
+body.market .category-card:nth-child(5) .category-image{
+  background:radial-gradient(ellipse at 80% 80%,#f9ffefaa 0 29%,transparent 30%),repeating-radial-gradient(circle at 15% -15%,#ffffff58 0 2px,transparent 3px 18px),linear-gradient(135deg,var(--cat-a),var(--cat-b));
+}
+body.market .category-card:nth-child(6) .category-image{
+  background:repeating-linear-gradient(90deg,transparent 0 26px,#fff5 27px 28px,transparent 29px 55px),linear-gradient(135deg,var(--cat-a),var(--cat-b));
+}
+
+/* Länderwelten: echte Vektorflaggen statt systemabhängiger Emoji-Flaggen */
+body.market #worlds .country-card {
+  isolation:isolate;
+  min-height:222px;
+  border:1px solid #ffffffab;
+  box-shadow:0 8px 23px #2f372118;
+  transition:transform .28s cubic-bezier(.2,.75,.25,1),box-shadow .28s;
+}
+body.market #worlds .country-card:hover,
+body.market #worlds .country-card:focus-visible {
+  transform:translateY(-4px);
+  box-shadow:0 17px 33px #2f372126;
+}
+body.market #worlds .country-card::before {
+  content:"";position:absolute;z-index:-1;
+  width:210px;height:210px;right:-68px;bottom:-122px;
+  border:30px solid #fff7;border-radius:50%;
+  transform:rotate(-15deg);
+  pointer-events:none;
+}
+body.market #worlds .country-card::after,
+.idea-head::after {
+  content:"";display:block;position:absolute;
+  width:67px;height:45px;right:21px;top:21px;
+  border-radius:6px;border:3px solid #fffffff2;
+  background-position:center;background-repeat:no-repeat;background-size:cover;
+  box-shadow:0 5px 14px #19211f24;
+  transform:rotate(5deg);
+  transition:transform .3s cubic-bezier(.2,.8,.3,1);
+  pointer-events:none;
+}
+body.market #worlds .country-card:hover::after,
+body.market #worlds .country-card:focus-visible::after,
+.idea-card:hover .idea-head::after {transform:rotate(0) translateY(-3px)}
+body.market #worlds .country-card strong {
+  position:relative;z-index:1;
+  margin-top:58px;
+}
+body.market #worlds .country-card small,
+body.market #worlds .country-card b {position:relative;z-index:1}
+body.market #worlds .country-sign {opacity:.075;right:0;bottom:-34px;font-size:135px}
+body.market #worlds .country-japan{
+  background:radial-gradient(circle at 82% 92%,#eaa6a86b 0 26%,transparent 27%),
+  linear-gradient(135deg,#fff3ee 5%,#f7d2d4 100%);color:#522f33;
+}
+body.market #worlds .country-korea{
+  background:radial-gradient(circle at 85% 100%,#7d9fdf5c 0 28%,transparent 29%),
+  linear-gradient(135deg,#f0f6ff,#d4e3f6);color:#293e60;
+}
+body.market #worlds .country-thai{
+  background:radial-gradient(circle at 85% 105%,#f3bc5794 0 32%,transparent 33%),
+  linear-gradient(135deg,#fff6d8,#f0dfab);color:#594126;
+}
+body.market #worlds .country-vietnam{
+  background:radial-gradient(circle at 85% 90%,#7fbea57d 0 28%,transparent 29%),
+  linear-gradient(135deg,#eaf7e9,#c8e7d4);color:#29513d;
+}
+body.market #worlds .country-japan::after,.idea-color-0::after,.idea-color-1::after{background-image:url("./assets/flag-japan.svg")}
+body.market #worlds .country-korea::after{background-image:url("./assets/flag-south-korea.svg")}
+body.market #worlds .country-thai::after,.idea-color-2::after{background-image:url("./assets/flag-thailand.svg")}
+body.market #worlds .country-vietnam::after{background-image:url("./assets/flag-vietnam.svg")}
+
+/* Kochideen: zartes kulinarisches Muster und passende Herkunftsflagge */
+.discovery-worlds {
+  background:radial-gradient(circle at 2% 100%,#dceabb 0 15%,transparent 16%),
+    linear-gradient(115deg,#eff4e6,#e0ebd8);
+  box-shadow:0 8px 23px #25432710;
+}
+.discovery-world-icons{
+  position:relative;overflow:hidden;
+  background:radial-gradient(circle at 100% 0%,#f4f4d47a 0 24%,transparent 25%),
+  linear-gradient(130deg,#d8e9c9,#c5dfbd);
+}
+.discovery-world-icons::before{
+  content:"";position:absolute;width:250px;height:250px;left:-85px;bottom:-165px;
+  border:30px solid #fff6;border-radius:50%;pointer-events:none;
+}
+.discovery-world-icons span{position:relative;z-index:1}
+.idea-head{position:relative;isolation:isolate;overflow:hidden;padding-right:85px}
+.idea-head::before{
+  content:"";position:absolute;right:-75px;bottom:-130px;width:230px;height:230px;
+  border:32px solid #fff7;border-radius:50%;z-index:-1;
+}
+.idea-head::after{width:49px;height:33px;right:16px;top:16px;border-width:2px}
+.idea-color-0{background:linear-gradient(120deg,#e5f2e3,#c8e7d5)}
+.idea-color-1{background:linear-gradient(120deg,#f9ecd0,#efce9e)}
+.idea-color-2{background:linear-gradient(120deg,#f5e4db,#e9c8ad)}
+.idea-head>span{transition:transform .3s ease}
+.idea-card:hover .idea-head>span{transform:rotate(-6deg) translateY(-3px)}
+body.market .quick-shop-banner{
+  background:radial-gradient(circle at 95% 110%,#3c6b53 0 30%,transparent 31%),
+  linear-gradient(115deg,#1b3830,#244a3b);
+}
+@media (prefers-reduced-motion:no-preference) {
+  .discovery-world-icons span:nth-child(2){animation:asia-gentle-float 6s ease-in-out infinite}
+  @keyframes asia-gentle-float{
+    0%,100%{translate:0 0}
+    50%{translate:0 -5px}
+  }
+}
+@media(max-width:760px){
+  body.market .category-card:hover,body.market .category-card:focus-visible{transform:translateY(-2px)}
+  body.market #worlds .country-card{min-height:180px;padding:15px}
+  body.market #worlds .country-card::after{width:48px;height:33px;right:13px;top:14px;border-width:2px}
+  body.market #worlds .country-card strong{margin-top:49px}
+  body.market #worlds .country-sign{font-size:105px;bottom:-22px}
+  .idea-head{padding-right:70px}
+  .idea-head::after{width:43px;height:30px;right:13px;top:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.market .category-card,body.market .category-card .cat-emoji,
+  body.market #worlds .country-card,body.market #worlds .country-card::after,
+  .idea-head::after,.idea-head>span{transition:none!important;animation:none!important}
+}
