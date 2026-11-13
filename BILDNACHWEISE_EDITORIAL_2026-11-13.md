@@ -4,7 +4,7 @@ Stand: 13.11.2026. Die Shopartikel und Marken bleiben ausdrücklich fiktiv. Die 
 
 ## Neue Bildquellen
 
-Die folgenden sechzehn Fotos wurden in optimierter Größe (960 px) von `images.pexels.com` heruntergeladen und im Projekt unter `assets/real/` abgelegt. Zu jedem Foto gehört die Pexels-Seite mit Originalmotiv, Urheber und Lizenzhinweis:
+Die folgenden achtzehn Fotos wurden in optimierter Größe (960–1100 px) von `images.pexels.com` heruntergeladen und im Projekt unter `assets/real/` abgelegt. Zu jedem Foto gehört die Pexels-Seite mit Originalmotiv, Urheber und Lizenzhinweis:
 
 | Datei | Fotografisches Motiv | Pexels-Seite |
 | --- | --- | --- |
@@ -24,6 +24,8 @@ Die folgenden sechzehn Fotos wurden in optimierter Größe (960 px) von `images.
 | `fruit-drink.jpg` | Fruchtsaft im Glas | https://www.pexels.com/photo/pineapple-juice-in-clear-drinking-glass-5817623/ |
 | `cookies.jpg` | Gebäck auf Teller | https://www.pexels.com/photo/cookies-on-plate-15290322/ |
 | `asian-spices.jpg` | Asiatische Gewürze und Kräuter | https://www.pexels.com/photo/fresh-asian-spice-and-herb-mix-in-glass-bowl-37261912/ |
+| `korean-bibimbap.jpg` | Koreanische Bibimbap-Schale (Länderwelt Südkorea) | https://www.pexels.com/photo/close-up-photo-of-food-in-a-bowl-9348489/ |
+| `vietnamese-pho.jpg` | Vietnamesische Pho-Nudelsuppe (Länderwelt Vietnam) | https://www.pexels.com/photo/cooked-food-in-the-bowl-6646070/ |
 
 Pexels gestattet die Nutzung von Fotos für kommerzielle Projekte ohne verpflichtende Namensnennung, solange die geltenden Nutzungsbedingungen eingehalten werden. Marken, Logos und sonstige abgebildete Rechte werden davon nicht automatisch freigegeben; deshalb verwenden wir keine fremde Markenverpackung als angeblich eigenen Shopartikel.
 

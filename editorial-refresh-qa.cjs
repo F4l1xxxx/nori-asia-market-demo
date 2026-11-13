@@ -24,7 +24,7 @@ const server=http.createServer((req,res)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  try{
   const photos=fs.readdirSync(path.join(root,'assets','real')).filter(n=>n.endsWith('.jpg'));
-  assert.equal(photos.length,16,'All 16 curated Pexels images are present');
+  assert.equal(photos.length,18,'All 18 curated Pexels images are present');
   assert.ok(photos.every(n=>fs.statSync(path.join(root,'assets','real',n)).size>8000),'No empty images');
   await page.setViewport({width:1440,height:900});
   await page.goto(base,{waitUntil:'domcontentloaded'});
@@ -36,7 +36,13 @@ const server=http.createServer((req,res)=>{
     hero:document.querySelector('.hero-editorial-photo')?.getAttribute('src'),
     photoPaths:[...new Set(photo)],cardImages:[...document.querySelectorAll('.product-card .product-photo img')].map(el=>el.getAttribute('src')),
     bodyWidth:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,
-    promoEmojiCount:document.querySelectorAll('.side-promo .promo-glyph').length};
+    promoEmojiCount:document.querySelectorAll('.side-promo .promo-glyph').length,
+    worlds:[...document.querySelectorAll('#worlds .country-card')].map(el=>({
+     country:el.dataset.orig,background:getComputedStyle(el).backgroundImage,
+     flag:getComputedStyle(el,'::after').backgroundImage,
+     text:el.querySelector('strong')?.textContent,height:el.getBoundingClientRect().height,
+     ghostVisible:getComputedStyle(el.querySelector('.country-sign')).display!=='none'
+    }))};
   });
   assert.equal(home.count,150);assert.equal(home.categories,6);assert.ok(home.cards>=20);
   assert.equal(home.brokenPacks,0);assert.ok(home.hero?.includes('real/'));
@@ -44,6 +50,8 @@ const server=http.createServer((req,res)=>{
   assert.ok(home.photoPaths.every(p=>p.startsWith('./assets/real/')),'Catalog images only from documented photographs');
   assert.ok(home.cardImages.length>=20&&home.cardImages.every(p=>p.startsWith('./assets/real/')));
   assert.equal(home.promoEmojiCount,0);
+  assert.equal(home.worlds.length,4,'Four country destinations');
+  assert.ok(home.worlds.every(x=>/assets\/real\/.*\.jpg/.test(x.background)&&x.flag.includes('flag-')&&x.height>=260&&!x.ghostVisible),'Country cards show real cuisine photos, small flags, no novelty lettering');
   assert.ok(home.scrollWidth<=home.bodyWidth+1,'No desktop horizontal overflow');
   const statuses=await page.evaluate(async(paths)=>Promise.all(paths.map(async p=>({p,status:(await fetch(p)).status}))),home.photoPaths);
   assert.ok(statuses.every(s=>s.status===200),'Every product image accessible');
@@ -61,12 +69,14 @@ const server=http.createServer((req,res)=>{
   await page.setViewport({width:390,height:844,isMobile:true,hasTouch:true});
   await page.goto(base,{waitUntil:'domcontentloaded'});
   const mobile=await page.evaluate(()=>({width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,
-   photos:document.querySelectorAll('.product-card .product-photo img').length}));
+   photos:document.querySelectorAll('.product-card .product-photo img').length,
+   worlds:[...document.querySelectorAll('#worlds .country-card')].map(el=>Math.round(el.getBoundingClientRect().width))}));
   assert.ok(mobile.scroll<=mobile.width+1,'Mobile page without horizontal overflow');
   assert.ok(mobile.photos>=20);
+  assert.ok(mobile.worlds.every(w=>w>300),'Mobile destination photos remain legible full-width');
   await page.screenshot({path:path.join(root,'editorial-mobile.png'),fullPage:true});
   assert.deepEqual(errors,[]);
-  console.log(JSON.stringify({pass:true,home:{count:home.count,categories:home.categories,cards:home.cards,distinctPhotos:home.photoPaths.length},productDetail:true,cart:true,mobile,errors},null,2));
+  console.log(JSON.stringify({pass:true,home:{count:home.count,categories:home.categories,cards:home.cards,distinctPhotos:home.photoPaths.length,worlds:home.worlds.map(w=>w.country)},productDetail:true,cart:true,mobile,errors},null,2));
  }catch(e){console.error('EDITORIAL_QA_FAIL',e.stack);process.exitCode=1;}
  finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});
