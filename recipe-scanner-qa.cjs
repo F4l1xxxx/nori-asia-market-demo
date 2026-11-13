@@ -64,6 +64,51 @@ const server=http.createServer((req,res)=>{
       products:window.NORI_DEMO.products.filter(p=>window.NORI_DEMO.cartContents()[p.id]).map(p=>[p.name,window.NORI_DEMO.cartContents()[p.id]])}));
     assert.equal(info.rows,5);assert.equal(info.count,'5');
     assert.ok(info.products.some(([name,count])=>name==='Kokosmilch Cremig'&&count===2));
+    const choiceUI=await page.evaluate(()=>{
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      return {count:card?.querySelectorAll('.rs-variant-option').length,
+        visible:[...(card?.querySelectorAll('.rs-variant-option')||[])].filter(e=>!e.closest('[hidden]')).length,
+        more:card?.querySelector('.rs-more-variants')?.textContent||''};
+    });
+    assert.equal(choiceUI.visible,1,'Only the equivalent recommendation is shown initially');
+    assert.match(choiceUI.more,/Weitere Produkte/,'More alternatives are opt-in');
+    await page.evaluate(()=>{
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      card.querySelector('.rs-more-variants').click();
+    });
+    const expanded=await page.evaluate(()=>{
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      return {visible:[...card.querySelectorAll('.rs-variant-option')].filter(e=>!e.closest('[hidden]')).length,
+        expanded:card.querySelector('.rs-more-variants').getAttribute('aria-expanded')};
+    });
+    assert.equal(expanded.visible,3,'All three real soy sauce types visible only after expanding');
+    assert.equal(expanded.expanded,'true');
+    await page.evaluate(()=>{
+      const dark=window.NORI_DEMO.products.find(p=>p.name==='Sojasauce Dunkel');
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      const radio=card.querySelector('input[data-rs-pick][value="'+dark.id+'"]');
+      radio.click();
+    });
+    const swapped=await page.evaluate(()=>{
+      const cart=window.NORI_DEMO.cartContents(),products=window.NORI_DEMO.products;
+      return {mild:cart[products.find(p=>p.name==='Sojasauce Mild').id]||0,
+        dark:cart[products.find(p=>p.name==='Sojasauce Dunkel').id]||0,
+        total:document.querySelector('#cart-count').textContent};
+    });
+    assert.equal(swapped.mild,0,'Old variant removed from cart');
+    assert.equal(swapped.dark,1,'Selected variant replaces it');
+    assert.equal(swapped.total,'5','Cart quantity is stable after replacing a variant');
+    const brandTest=await page.evaluate(()=>{
+      const arr=window.NORI_DEMO.products;
+      const base=arr.find(p=>p.name==='Sojasauce Mild');
+      const extra=[1,2,3,4].map(i=>({...base,id:'qa-soy-brand-'+i,name:'Marke '+i+' Sojasauce Mild',brand:'Marke '+i,price:2.99+i/10}));
+      arr.push(...extra);
+      const row=window.ASIA_RECIPE_SCANNER.analyzeText('2 EL Sojasauce')[0];
+      const candidates=window.ASIA_RECIPE_SCANNER.alternativesFor(row);
+      arr.splice(arr.length-extra.length,extra.length);
+      return {matchingBrands:candidates.filter(x=>x.sameType).length,total:candidates.length};
+    });
+    assert.ok(brandTest.matchingBrands>=5,'Multiple brands of the same type are candidates');
     await page.click('#rs-manual');
     assert.equal(await page.$eval('#cart-count',e=>e.textContent),'5','Repeat analysis does not double-add items');
     await page.screenshot({path:path.join(root,'recipe-scanner-desktop.png'),fullPage:true});
@@ -75,6 +120,13 @@ const server=http.createServer((req,res)=>{
     await load('?seite=rezeptscanner');
     const dims=await page.evaluate(()=>({w:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));
     assert.ok(dims.scroll<=dims.w+1,'Mobile no overflow: '+JSON.stringify(dims));
+    await page.click('#rs-demo');
+    await page.evaluate(()=>{
+      const card=[...document.querySelectorAll('.rs-result')].find(e=>e.querySelector('.rs-result-main>strong')?.textContent==='Sojasauce');
+      card.querySelector('.rs-more-variants').click();
+    });
+    const mobileVariants=await page.evaluate(()=>({w:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));
+    assert.ok(mobileVariants.scroll<=mobileVariants.w+1,'Expanded mobile options do not overflow');
     await page.screenshot({path:path.join(root,'recipe-scanner-mobile.png'),fullPage:true});
     await page.setViewport({width:1440,height:960});
     await load('?seite=rezeptscanner');

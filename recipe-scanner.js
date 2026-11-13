@@ -9,7 +9,7 @@
   const norm=s=>String(s??"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/ß/g,"ss").toLocaleLowerCase("de").replace(/[^a-z0-9]+/g," ").trim();
   const money=n=>api.formatMoney(Number(n)||0);
   const item=name=>api.products.find(p=>norm(p.name)===norm(name));
-  const state={rows:[],busy:false,preview:null,source:"",raw:"",imported:new Set()};
+  const state={rows:[],busy:false,preview:null,source:"",raw:"",imported:new Set(),expandedVariants:new Set()};
   const patternData=[
     ["Sushireis Rundkorn",/\b(sushi ?reis|sushireis|sushi rice)\b/,"high"],
     ["Reispapier Rund",/\b(reispapier|rice paper|sommerrollen ?papier)\b/,"high"],
@@ -71,6 +71,27 @@
     const p=result&&item(result[0]);
     return p?{product:p,confidence:result[2]}:{product:null,confidence:"missing"};
   }
+  // Families make brands discoverable without treating different recipes or
+  // incompatible product types as interchangeable.
+  const variantFamilies=[
+    {ingredient:/\b(soja ?sauce|soja ?sosse|sojasobe|soy sauce|shoyu|tamari)\b/,product:/\b(soja ?sauce|tamari(?: sauce)?|shoyu sauce)\b/,kind:p=>/\b(dunkel|dark)\b/.test(norm(p.name))?"dunkel":/\btamari\b/.test(norm(p.name))?"tamari":"mild"},
+    {ingredient:/\b(kokos ?milch|coconut milk)\b/,product:/\b(kokos ?milch|coconut milk)\b/},
+    {ingredient:/\b(sushi ?reis|sushireis|sushi rice)\b/,product:/\b(sushi ?reis|sushireis|sushi rice)\b/},
+    {ingredient:/\b(reis ?nudeln?|rice noodles?)\b/,product:/\b(reis ?nudeln?|rice noodles?)\b/,kind:p=>/\b3 mm\b/.test(norm(p.name))?"3mm":/\b5 mm\b/.test(norm(p.name))?"5mm":"andere"},
+    {ingredient:/\b(nori|sushi ?algen)\b/,product:/\b(nori|sushi ?algen)\b/},
+    {ingredient:/\b(reis ?essig|rice vinegar)\b/,product:/\b(reis ?essig|rice vinegar)\b/}
+  ];
+  function alternativesFor(row){
+    if(!row.product)return [];
+    const family=variantFamilies.find(f=>f.ingredient.test(norm(row.label))&&f.product.test(norm(row.product.name)));
+    if(!family)return [{product:row.product,sameType:true}];
+    const selectedType=family.kind?.(row.product);
+    const others=api.products.filter(p=>p.id!==row.product.id&&family.product.test(norm(p.name))).map(p=>({
+      product:p,sameType:!family.kind||family.kind(p)===selectedType
+    }));
+    others.sort((a,b)=>Number(b.sameType)-Number(a.sameType)||Number((b.product.demoStock??99)>0)-Number((a.product.demoStock??99)>0)||Number(a.product.price)-Number(b.product.price));
+    return [{product:row.product,sameType:true},...others];
+  }
   function number(s){
     if(!s)return null;
     const x=String(s).trim();
@@ -102,7 +123,7 @@
     if(!found.product&&q!=null&&norm(label).split(" ").length>5)return null;
     // Bare words from an entire webpage are usually navigation or adverts, not ingredients.
     if(!found.product&&q==null&&!bareIngredients.test(norm(label)))return null;
-    return {source:line,label,q,unit:u,product:found.product,confidence:found.confidence,added:false};
+    return {source:line,label,q,unit:u,product:found.product,confidence:found.confidence,baseConfidence:found.confidence,added:false,addedCount:0};
   }
   // OCR's plain-text reading order interleaves the left preparation column with
   // the right ingredient column. TSV word coordinates let us isolate that panel.
@@ -191,12 +212,36 @@
       const canAdd=Math.min(row.count,Math.max(0,(row.stock||99)-prev),99-prev);
       if(canAdd<=0)continue;
       api.addToCart(row.product.id,canAdd);
-      row.added=true;added++;packages+=canAdd;
+      row.added=true;row.addedCount=(row.addedCount||0)+canAdd;added++;packages+=canAdd;
     }
     return {added,packages};
   }
   function describeAmount(row){
     return row.q!=null?String(row.q).replace(".",",")+(row.unit?" "+row.unit:""):"Menge nicht genannt";
+  }
+  function renderVariants(row,index){
+    const all=alternativesFor(row);
+    if(all.length<=1)return "";
+    // Keep only the recommendation and up to two equivalent products visible.
+    // Different varieties are never presented as equally safe substitutions.
+    const visible=[all[0],...all.slice(1).filter(v=>v.sameType).slice(0,2)];
+    const extra=all.slice(1).filter(v=>!visible.includes(v));
+    const expanded=state.expandedVariants.has(index);
+    const option=v=>{
+      const p=v.product,plan=calculate({...row,product:p});
+      const selected=p.id===row.product.id;
+      const incompatible=!v.sameType;
+      const unavailable=!plan.available;
+      const disabled=unavailable||(row.added&&!row.addedCount);
+      return '<label class="rs-variant-option'+(selected?' selected':'')+(incompatible?' different':'')+'">'+
+        '<input type="radio" name="rs-product-'+index+'" data-rs-pick="'+index+'" value="'+safe(p.id)+'"'+(selected?' checked':'')+(disabled?' disabled':'')+'>'+
+        '<span class="rs-variant-info"><strong>'+safe(p.name)+'</strong><small>'+safe(p.brand?String(p.brand)+' · ':'')+safe(p.size)+' · '+plan.count+' Packung'+(plan.count===1?'':'en')+(incompatible?' · Andere Sorte':'')+(unavailable?' · Nicht verfügbar':'')+'</small></span>'+
+        '<strong class="rs-variant-price">'+money(Number(p.price)*plan.count)+'</strong></label>';
+    };
+    return '<fieldset class="rs-variants"><legend>Produkt auswählen</legend>'+visible.map(option).join('')+
+      (extra.length?'<div id="rs-extra-'+index+'" class="rs-extra-variants"'+(expanded?'':' hidden')+'>'+extra.map(option).join('')+'</div>'+
+       '<button class="rs-more-variants" data-rs-more="'+index+'" aria-controls="rs-extra-'+index+'" aria-expanded="'+expanded+'" type="button">'+(expanded?'Weniger anzeigen ↑':'Weitere Produkte ('+extra.length+') ↓')+'</button>':'')+
+      '</fieldset>';
   }
   function renderRows(){
     const slot=$("#rs-results");if(!slot)return;
@@ -212,17 +257,40 @@
       const quantity=r.precision==="calculated"?"Packungsgröße berechnet":"1 Packung geschätzt bzw. Stückangabe";
       const stockWarning=!r.available?' · Nicht ausreichend Demo-Bestand':'';
       return '<article class="rs-result'+(r.confidence==="possible"?" possible":"")+(r.added?" added":"")+'" data-rs-index="'+i+'">'+
-      '<div class="rs-result-icon" aria-hidden="true">'+safe(r.product.emoji)+'</div><div class="rs-result-main"><strong>'+safe(r.label)+'</strong><small>'+safe(r.product.name)+' · '+safe(r.product.size)+'</small><small>'+safe(describeAmount(r))+' → <b>'+r.count+' × '+safe(r.product.size)+'</b> · '+safe(quantity)+safe(stockWarning)+'</small></div>'+
+      '<div class="rs-result-icon" aria-hidden="true">'+safe(r.product.emoji)+'</div><div class="rs-result-main"><strong>'+safe(r.label)+'</strong><small>'+safe(r.product.name)+' · '+safe(r.product.size)+'</small><small>'+safe(describeAmount(r))+' → <b>'+r.count+' × '+safe(r.product.size)+'</b> · '+safe(quantity)+safe(stockWarning)+'</small>'+renderVariants(r,i)+'</div>'+
       '<div class="rs-result-end"><strong>'+money(r.product.price*r.count)+'</strong>'+
-      (r.added?'<span class="rs-added">✓ Im Warenkorb</span>':'<label class="rs-select"><input type="checkbox" data-rs-choose="'+i+'" '+(r.confidence==="high"&&r.available?'checked':'')+(r.available?'':' disabled')+'> '+safe(caution)+'</label>')+'</div></article>';
+      (r.added?'<span class="rs-added">✓ Im Warenkorb</span>':'<label class="rs-select"><input type="checkbox" data-rs-choose="'+i+'" '+((r.confidence==="high"||r.userSelected)&&r.available?'checked':'')+(r.available?'':' disabled')+'> '+safe(caution)+'</label>')+'</div></article>';
     }).join("");
     $("#rs-add").disabled=!state.rows.some(r=>r.product&&!r.added&&r.available);
     $("#rs-summary-note").textContent=possible?possible+" ähnliche Treffer werden nicht automatisch übernommen.":"Mengen und Zutaten vor einer echten Bestellung immer prüfen.";
   }
+  function chooseVariant(index,id){
+    const row=state.rows[index];if(!row||!row.product)return;
+    const choice=alternativesFor(row).find(v=>String(v.product.id)===String(id));
+    if(!choice||choice.product.id===row.product.id)return;
+    const plan=calculate({...row,product:choice.product});
+    const existing=api.cartContents()[choice.product.id]||0;
+    if(!plan.available||existing+plan.count>plan.stock){setNotice("Diese Variante ist in der benötigten Menge nicht verfügbar.","warn");renderRows();return;}
+    if(row.added&&!row.addedCount){setNotice("Bitte bereits übernommene Produkte im Warenkorb ändern.","warn");renderRows();return;}
+    if(row.added){
+      api.addToCart(row.product.id,-row.addedCount);
+      api.addToCart(choice.product.id,plan.count);
+      row.addedCount=plan.count;
+    }
+    row.product=choice.product;
+    row.confidence=choice.sameType?row.baseConfidence:"possible";
+    row.userSelected=true;
+    Object.assign(row,plan);
+    renderRows();
+    setNotice(row.added?"Produkt im Warenkorb durch deine Auswahl ersetzt.":choice.sameType?"Produktvariante ausgewählt.":"Andere Produktsorte gewählt. Bitte prüfen, ob sie zum Rezept passt.",choice.sameType?"success":"info");
+  }
   function runAnalysis(text,fromImage=false,allowAuto=true){
+    const previousText=state.raw,previousRows=state.rows;
     state.raw=String(text||"");
+    state.expandedVariants.clear();
     $("#rs-text").value=state.raw;
-    state.rows=analyzeText(state.raw);
+    // Re-checking an unchanged list must not reset a deliberately chosen brand.
+    state.rows=previousText===state.raw&&previousRows.length?previousRows:analyzeText(state.raw);
     if(!state.rows.length){renderRows();setNotice("Keine Zutaten erkannt. Prüfe das Bild oder füge die Zutaten als Text ein.","warn");return;}
     const fingerprint=norm(state.raw);
     const alreadyImported=state.imported.has(fingerprint);
@@ -318,6 +386,18 @@
     $("#rs-manual").addEventListener("click",()=>runAnalysis($("#rs-text").value));
     $("#rs-demo").addEventListener("click",()=>runAnalysis("Zutaten für 2 Personen\n800 ml Kokosmilch\n250 g Reisnudeln\n2 EL Sojasauce\n1 TL Sesamöl\n1 Zwiebel"));
     $("#rs-cart").addEventListener("click",()=>$("#cart-button").click());
+    $("#rs-review-list").addEventListener("click",e=>{
+      const btn=e.target.closest("[data-rs-more]");if(!btn)return;
+      const index=Number(btn.dataset.rsMore),extra=$("#rs-extra-"+index);
+      const expanded=!state.expandedVariants.has(index);
+      if(expanded)state.expandedVariants.add(index);else state.expandedVariants.delete(index);
+      if(extra)extra.hidden=!expanded;
+      btn.setAttribute("aria-expanded",String(expanded));
+      btn.textContent=expanded?"Weniger anzeigen ↑":"Weitere Produkte ("+(extra?.children.length||0)+") ↓";
+    });
+    $("#rs-review-list").addEventListener("change",e=>{
+      const input=e.target.closest("[data-rs-pick]");if(input)chooseVariant(Number(input.dataset.rsPick),input.value);
+    });
     $("#rs-add").addEventListener("click",()=>{
       const rows=state.rows.filter((r,i)=>!r.added&&$("[data-rs-choose='"+i+"']")?.checked);
       const done=applyRows(rows);if(done.added)state.imported.add(norm(state.raw));renderRows();setNotice(done.added?"✓ "+done.packages+" weitere Packungen in den Demo-Warenkorb gelegt.":"Bitte wähle einen verfügbaren Artikel aus.",done.added?"success":"warn");
@@ -348,5 +428,5 @@
     promo();
     if(new URLSearchParams(location.search).get("seite")==="rezeptscanner")scannerView();
   });
-  window.ASIA_RECIPE_SCANNER={analyzeText,calculate,matchIngredient,extractIngredientsFromLayout,processFile};
+  window.ASIA_RECIPE_SCANNER={analyzeText,calculate,matchIngredient,alternativesFor,extractIngredientsFromLayout,processFile};
 })();

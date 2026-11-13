@@ -9,6 +9,8 @@
 - Bei vollständigen Rezeptseiten liest die OCR Wortpositionen (TSV) und identifiziert gezielt den Bereich unter **„Zutaten“**. Zubereitungsspalten, Navigation, Werbetexte und „Jetzt bestellen“-Schaltflächen werden nicht als Zutaten übernommen.
 - Wird kein eindeutiger Zutatenbereich erkannt, bleibt der Warenkorb unverändert. Der Nutzer kann einen enger auf die Zutatenliste zugeschnittenen Screenshot verwenden oder die Zutaten im Textfeld korrigieren.
 - Der Scanner ordnet Zutaten anhand konservativer, kuratierter Namen/Synonyme den 150 fiktiven Shop-Artikeln zu. Unsichere Vorschläge und nicht verfügbare Zutaten werden getrennt angezeigt.
+- Bei mehreren passenden Marken bzw. Packungen werden höchstens drei gleichartige Produkte unmittelbar sichtbar. **„Weitere Produkte“** öffnet die übrigen Varianten erst auf Wunsch; abweichende Sorten sind ausdrücklich als solche gekennzeichnet und werden nicht stillschweigend gleichgesetzt.
+- Ein Wechsel der ausgewählten Variante aktualisiert im Demo-Warenkorb nur die zuvor vom Scanner hinzugefügte Menge und vermeidet doppelte Artikel. Bereits vorhandene eigene Warenkorbpositionen bleiben erhalten.
 - Bei Gramm/Millilitern wird die benötigte **Anzahl ganzer Packungen** aufgerundet (z. B. 800 ml Kokosmilch bei 400-ml-Dosen = 2 Dosen). Bei EL/TL oder fehlenden Mengen wird eine Packung **als Schätzung** vorgeschlagen.
 - Sichere verfügbare Treffer werden standardmäßig sofort in den lokalen Demo-Warenkorb übernommen. Der Automatismus lässt sich vor dem Scan abschalten. Eine unveränderte Zutatenliste wird nicht mehrfach automatisch hinzugefügt.
 - Keine echten Bestellungen, Zahlungen oder Kundendatenverarbeitung.
@@ -25,7 +27,7 @@
 
 ## Prüfung
 
-`node recipe-scanner-qa.cjs` startet einen lokalen Test-Webserver und prüft Parsing, Packungsrechnung, Demo-Warenkorb, Verhinderung doppelter Übernahme, mobile Breite und echte OCR-Erkennung eines generierten Bildes. Der Test stellt sicher, dass beim OCR-Lauf keine Drittanbieter-Anfragen abgehen.
+`node recipe-scanner-qa.cjs` startet einen lokalen Test-Webserver und prüft Parsing, Packungsrechnung, Demo-Warenkorb, Verhinderung doppelter Übernahme, kompakte Produktalternativen, gezieltes Aufklappen, Variantenwechsel, mobile Breite und echte OCR-Erkennung eines generierten Bildes. Der Test stellt sicher, dass beim OCR-Lauf keine Drittanbieter-Anfragen abgehen.
 
 `node qa.cjs` prüft die fünf bestehenden Shop-Testgruppen auf Regressionen.
 
