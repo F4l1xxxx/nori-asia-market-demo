@@ -48,13 +48,10 @@ function breadcrumbs(parts){
  return '<nav class="breadcrumbs" aria-label="Brotkrumennavigation"><a href="./">Startseite</a>'+parts.map((p,i)=>'<span>›</span>'+(p.url?'<a href="'+p.url+'">'+esc(p.name)+'</a>':'<strong aria-current="page">'+esc(p.name)+'</strong>')).join("")+'</nav>';
 }
 function detailPack(p){
- const c=p.colors||["#e8dece","#514a39"];
- return '<div class="showcase-product-art" style="--art-a:'+c[0]+';--art-b:'+c[1]+'">'+
- '<div class="art-shadow"></div><div class="art-pack type-'+p.ci+'"><div class="art-top">'+esc(p.brand)+'</div><div class="art-emoji" aria-hidden="true">'+p.emoji+'</div><strong>'+esc(p.name)+'</strong><small>'+esc(p.size)+'</small></div>'+
- '</div>';
+ return '<div class="showcase-product-art editorial-product-art"><img class="editorial-product-image" src="'+api.productImage(p)+'" alt="Kulinarisches Symbolfoto zu '+esc(p.name)+'" decoding="async"><span class="editorial-photo-note">Symbolfoto · keine Originalverpackung</span></div>';
 }
 function productTile(p){
- return '<article class="shop-tile"><a class="shop-tile-visual" href="'+productUrl(p.id)+'" aria-label="'+esc(p.name)+' ansehen"><span class="tile-emoji" aria-hidden="true">'+p.emoji+'</span><span class="tile-label">ILLUSTRATION</span></a><div class="shop-tile-content"><span>'+esc(p.brand)+' · '+esc(p.origin)+'</span><a class="shop-tile-name" href="'+productUrl(p.id)+'">'+esc(p.name)+'</a><small>'+esc(p.size)+' · '+esc(p.unitPrice)+'</small><div class="shop-tile-bottom"><strong>'+eur(p.price)+'</strong><button class="tile-add" data-add="'+p.id+'"'+(p.demoStock===0?' disabled':'')+' aria-label="'+esc(p.name)+' in den Warenkorb">'+(p.demoStock===0?'Nicht verfügbar':'+ Hinzufügen')+'</button></div></div></article>';
+ return '<article class="shop-tile"><a class="shop-tile-visual" href="'+productUrl(p.id)+'" aria-label="'+esc(p.name)+' ansehen"><img class="shop-tile-photo" src="'+api.productImage(p)+'" alt="Kulinarisches Symbolfoto" loading="lazy" decoding="async"></a><div class="shop-tile-content"><span>'+esc(p.brand)+' · '+esc(p.origin)+'</span><a class="shop-tile-name" href="'+productUrl(p.id)+'">'+esc(p.name)+'</a><small>'+esc(p.size)+' · '+esc(p.unitPrice)+'</small><div class="shop-tile-bottom"><strong>'+eur(p.price)+'</strong><button class="tile-add" data-add="'+p.id+'"'+(p.demoStock===0?' disabled':'')+' aria-label="'+esc(p.name)+' in den Warenkorb">'+(p.demoStock===0?'Nicht verfügbar':'+ Hinzufügen')+'</button></div></div></article>';
 }
 function productView(p){
  const d=p.nutrition;
@@ -62,7 +59,7 @@ function productView(p){
  const table=(label,v)=>'<tr><th scope="row">'+label+'</th><td>'+v+'</td></tr>';
  const note="Alle Produkt- und Nährwertangaben sind Demo-Muster. Vor dem Liveverkauf müssen die Originaletiketten verifiziert werden.";
  return '<div class="layout route-inner">'+breadcrumbs([{name:p.category,url:catUrl(p.category)},{name:p.name}])+
- '<div class="pdp-grid"><div class="pdp-visual-block">'+detailPack(p)+'<div class="pdp-visual-legend"><span>Eigene Verpackungsillustration</span><span>Originalfoto folgt nach Händlerfreigabe</span></div></div>'+
+ '<div class="pdp-grid"><div class="pdp-visual-block">'+detailPack(p)+'<div class="pdp-visual-legend"><span>Fotografische Produktillustration</span><span>Originalverpackung erst nach Händlerfreigabe</span></div></div>'+
  '<div class="pdp-data">'+demoNote+'<div class="pdp-brand">'+esc(p.brand)+' · '+esc(p.origin)+'</div><h1>'+esc(p.name)+'</h1><p class="pdp-description">'+esc(p.description)+'</p>'+
  '<div class="pdp-tags"><span>'+esc(p.size)+'</span><span>Artikel-Nr. DEMO-'+esc(p.id.toUpperCase())+'</span><span>'+esc(p.category)+'</span></div>'+
  '<div class="pdp-shipping-tag'+(p.category==="Tiefkühl & Fertiggerichte"?" cold":"")+'">'+(p.category==="Tiefkühl & Fertiggerichte"?"❄️ ":"📦 ")+esc(window.ASIA_SHOP_FEATURES.storageOf(p))+'</div>'+

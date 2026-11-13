@@ -1,0 +1,188 @@
+/* ASIA MART — editorial storefront refresh. Keep all commerce behaviour intact.
+   Photography depicts real food; catalog brands, quantities and prices remain demo data. */
+:root{--mart-ink:#27312c;--mart-red:#ae4837;--mart-reddeep:#87392c;--mart-yellow:#f2ece3;--mart-cream:#fbfbf9;--mart-white:#fff;--mart-line:#e5e8e3;--mart-muted:#6e7972;--green:#294237;--dark:#27312c;--cream:#fbfbf9;--accent:#b47e62;--red:#a84b3a;--shadow:0 9px 25px #25342b12}
+body.market{background:#fbfbf9;color:#27312c;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body.market .layout{max-width:1430px}
+body.market .demo-top{background:#304238;color:#fff;font-size:10px;letter-spacing:.025em;padding:7px 10px}
+body.market .demo-top span{background:transparent;color:#f3e1cb;padding:0;margin-right:7px;font-weight:700}
+body.market .service-top{background:#f5f6f3;color:#627169}
+body.market .service-top-inner span{font-weight:500}
+body.market .shop-header{box-shadow:none;border-bottom:1px solid #e7eae5}
+body.market .header-main{height:82px;gap:28px}
+body.market .market-logo-star{background:#294237;border-radius:6px;width:42px;height:42px;font-size:0;box-shadow:none}
+body.market .market-logo-star:after{content:"A";font:700 26px Georgia,serif;color:#fff}
+body.market .market-logo-name{font-size:24px;letter-spacing:-.055em;font-weight:800;color:#253329}
+body.market .market-logo-name>span{color:#a64c3c}
+body.market .market-logo-name small{font-weight:600;letter-spacing:.12em;color:#77847a}
+body.market .search-wrap{background:#f7f8f6;border:1px solid #dfe6df;border-radius:6px;max-width:730px;height:49px}
+body.market .search-wrap:focus-within{border-color:#869b8a;box-shadow:0 0 0 3px #59786416}
+body.market .nav-inner{min-height:43px;gap:22px}
+body.market .nav-inner a{font-size:12px;font-weight:600;color:#44554b}
+body.market .nav-inner a.nav-all{background:#eff2ee;padding:11px 17px;color:#294237;border-radius:4px;align-self:center}
+body.market .nav-inner a.nav-ship{color:#455e50}
+body.market .nav-inner a:hover{color:#8c4435!important}
+body.market .mini-badge.badge-active{background:#294237}
+body.market .market-hero{gap:13px;padding-top:22px;padding-bottom:30px;grid-template-columns:minmax(0,1fr) 280px}
+body.market .market-hero-main{background:#f2f2ec;border-radius:10px;min-height:450px;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)}
+body.market .market-hero-main:after{content:none}
+body.market .hero-words{padding:64px 38px 47px 51px}
+body.market .retail-eyebrow{color:#536b5b;font-weight:700;font-size:10px;letter-spacing:.12em}
+body.market .hero-words h1{font-size:clamp(40px,4.1vw,60px);line-height:1.08;letter-spacing:-.055em;font-weight:760;color:#24362d;margin:22px 0 21px}
+body.market .hero-words h1 em{color:#9b5140;font-style:normal}
+body.market .hero-words p{font-size:14px;line-height:1.82;color:#5b6a60;max-width:420px}
+body.market .market-button{background:#294237;color:#fff;min-height:46px;padding:12px 19px;font-weight:700;font-size:12px;letter-spacing:.005em;border-radius:5px;box-shadow:none}
+body.market .market-button:hover{background:#20362c}
+body.market .hero-text-link{color:#355245;font-weight:600;text-decoration:none;border-bottom:1px solid #a7b9aa;padding-bottom:4px}
+body.market .hero-badges{margin-top:44px;font-size:10px;font-weight:500;color:#6d7c71}
+body.market .hero-badges span{border-color:#d6dbd2}
+body.market .hero-grocery-visual{height:100%;min-height:450px;background:#e9e8e2}
+body.market .hero-editorial-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center 48%;position:absolute;inset:0}
+body.market .hero-photo-credit{position:absolute;bottom:12px;right:13px;font-size:9px;letter-spacing:.015em;color:#fff;background:#192c27a6;padding:6px 8px;border-radius:3px}
+body.market .market-side-promos{gap:13px}
+body.market .side-promo{border-radius:9px;padding:24px;color:#fff!important;justify-content:flex-end;background:#283c32!important}
+body.market .side-promo:before{content:"";position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;transition:transform .3s;filter:saturate(.75)}
+body.market .side-promo:hover:before{transform:scale(1.035)}
+body.market .side-promo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#121f1700 15%,#111d17d9 100%);z-index:1}
+body.market .side-red:before{background-image:url('./assets/real/mochi.jpg')}
+body.market .side-yellow:before{background-image:url('./assets/real/matcha-powder.jpg')}
+body.market .side-promo .promo-overline{font-weight:700;letter-spacing:.11em;opacity:.92}
+body.market .side-promo strong{font-size:24px;line-height:1.16;letter-spacing:-.04em;font-weight:700;max-width:240px;margin:10px 0 7px}
+body.market .side-promo>span:not(.promo-overline):not(.promo-glyph){font-weight:500;color:#f2f3ed}
+body.market .side-promo>b{font-weight:700;margin-top:14px}
+body.market .side-promo .promo-glyph{display:none}
+body.market .retail-benefits{background:#fff;border-top:1px solid #edf0e9}
+body.market .benefits-flex{min-height:59px}
+body.market .benefits-flex>span{font-size:11px;color:#65756a}
+body.market .benefits-flex b{color:#35463a;font-weight:700}
+body.market .shop-section{padding-top:69px;padding-bottom:18px}
+body.market .retail-label{color:#8e5546;font-weight:750;letter-spacing:.13em}
+body.market .section-heading h2{font-size:clamp(29px,3vw,39px);font-weight:760;letter-spacing:-.052em;color:#29372d}
+body.market .section-heading h2 em{color:#7a5447;font-weight:inherit}
+body.market .section-heading p{font-size:12px;line-height:1.7;color:#7a857d}
+body.market .shop-all-link{color:#3f6250;font-weight:700;border-color:#aebfad}
+body.market .category-grid{gap:12px}
+body.market .category-card{background:#fff!important;border:1px solid #e7eae5;border-radius:8px;padding:11px;min-height:190px;box-shadow:none;transition:border-color .15s,transform .15s}
+body.market .category-card:hover{border-color:#adbfb2;transform:translateY(-2px);box-shadow:none}
+body.market .category-card .category-image{background:#f3f4f1!important;border-radius:5px;height:111px;margin-bottom:8px;overflow:hidden}
+body.market .category-card .category-image img{display:block;width:100%;height:100%;object-fit:cover;mix-blend-mode:normal;border-radius:5px;filter:saturate(.82)}
+body.market .category-card strong{font-size:12px;font-weight:750;color:#273a2e;margin-top:8px}
+body.market .category-card small{font-size:10px;color:#88948b}
+body.market .category-card .cat-emoji{display:none}
+body.market .category-card .cat-arrow{color:#617d67}
+body.market .deals-layout{grid-template-columns:210px minmax(0,1fr);gap:12px}
+body.market .deal-banner{background:#31473b;border-radius:8px;padding:23px 20px}
+body.market .deal-banner:after{content:none}
+body.market .deal-banner-kicker{background:#e5eee3;color:#385646;font-weight:700;border-radius:3px}
+body.market .deal-banner strong{font-size:27px;font-weight:750;letter-spacing:-.045em;margin:25px 0 8px}
+body.market .deal-banner p{color:#e0e9e1;line-height:1.65}
+body.market .deal-banner>b{background:#e5eee3;color:#304a3b;font-weight:700;border-radius:4px}
+body.market .deal-banner-link{font-weight:650}
+body.market .retail-collection-group{border-color:#e6eae3}
+body.market .product-card{border:1px solid #e5e9e3;border-radius:7px;background:#fff;box-shadow:none;transition:border-color .15s,transform .15s}
+body.market .product-card:hover{border-color:#b5c5b8;box-shadow:0 6px 16px #25342b0c;transform:translateY(-2px)}
+body.market .product-visual,body.market .catalog-grid .product-visual{height:216px;background:#f4f5f1;display:block}
+body.market .product-photo{position:relative;width:100%;height:100%;display:block;overflow:hidden}
+body.market .product-photo>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.82);transition:transform .3s}
+body.market .product-card:hover .product-photo>img{transform:scale(1.035)}
+body.market .photo-disclaimer{position:absolute;right:8px;bottom:8px;background:#fffdf0de;color:#4e6254;font-size:9px;font-weight:600;letter-spacing:.01em;padding:4px 6px;border-radius:3px}
+body.market .flag{background:#ffffffed;color:#46614c;border:1px solid #e3e9e1;font-size:8px;letter-spacing:.04em;font-weight:650;border-radius:3px}
+body.market .heart-btn{border-radius:50%;color:#6b776d}
+body.market .product-body{padding:14px 14px 15px}
+body.market .product-overline{font-size:9px;font-weight:600;color:#8b978d}
+body.market .product-name{color:#28372e;font-size:13px;font-weight:700;letter-spacing:-.02em;min-height:39px}
+body.market .product-subline{font-size:10px;color:#8a968b}
+body.market .price{font-size:19px;font-weight:750;color:#2d4436}
+body.market .add-btn{background:#294237;border-radius:5px;width:35px;height:35px;font-size:21px}
+body.market .add-btn:hover{background:#1f3429}
+body.market .filter-bar{border-radius:7px;border-color:#e0e8df}
+body.market .chip{background:#f8f9f6;border:1px solid #dfe7df;border-radius:5px;font-weight:600}
+body.market .chip.selected{background:#294237;border-color:#294237}
+body.market .catalog-count{background:#f0f4ee;color:#48634f;border-radius:4px}
+body.market .country-card{border:1px solid #e4e9e1;border-radius:7px;min-height:172px;padding:24px;background:#f5f6f2;color:#2f4536;box-shadow:none}
+body.market .country-card:hover{transform:translateY(-2px);border-color:#adc2ad}
+body.market .country-sign{right:10px;bottom:0;font-size:102px;opacity:.055}
+body.market .country-card strong{font-size:25px;font-weight:750;letter-spacing:-.045em}
+body.market .country-card b{font-weight:650}
+body.market .quick-shop-banner{background:#31473b;border-radius:8px}
+body.market .quick-shop-banner>div:first-child{padding:44px 47px}
+body.market .quick-shop-banner h2{font-size:39px;font-weight:760;letter-spacing:-.055em}
+body.market .quick-shop-banner h2 em{color:#ede0c3}
+body.market .quick-shop-banner p{color:#dde8df}
+body.market .quick-goods{background:#f2f2ed}
+body.market .quick-goods img{width:100%;height:100%;display:block;object-fit:cover;filter:saturate(.8)}
+body.market .signup-section{background:#eff3ed;border-radius:8px;margin-bottom:65px}
+body.market .signup-section h2{font-size:28px;font-weight:750}
+body.market .signup-section .newsletter-form button{background:#294237}
+body.market .market-footer{background:#263b30}
+body.market .market-footer .market-logo-star{width:37px;height:37px}
+body.market .market-footer .market-logo-star:after{font-size:24px}
+body.market .demo-ribbon{background:#e7ece6;color:#426048}
+/* Product photos are shared by homepage, category listings, quick search and modal. */
+body.market .modal-product-visual{background:#f3f5f2}
+body.market .modal-product-visual .product-photo{height:100%;min-height:320px}
+body.market .modal-product-visual .product-photo-large>img{width:100%;height:100%;object-fit:cover}
+body.market .cart-thumb{overflow:hidden;border-radius:6px;background:#f1f3ef}
+body.market .cart-thumb img,body.market .cross-emoji img,body.market .search-suggestion-icon img{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(.8)}
+body.market .cross-emoji{overflow:hidden;border-radius:4px}
+body.market .search-suggestion-icon{overflow:hidden;border-radius:4px}
+body.market .cart-recommendation{background:#f3f6f1;border:1px solid #e1e8df}
+body.market .product-modal-details .btn,body.market .cart-footer .btn,body.market .checkout-modal-card .btn{background:#294237}
+body.market .cart-footer .shipping-progress>div{background:#537b5c}
+/* Stand-alone catalog detail and related product tiles. */
+body.market .route-root{background:#fbfbf9}
+body.market .showcase-product-art.editorial-product-art{background:#f2f4f0;border:1px solid #e2e9e0;border-radius:10px;display:block;position:relative;overflow:hidden}
+body.market .showcase-product-art.editorial-product-art:before{content:none}
+body.market .showcase-product-art.editorial-product-art:after{content:none}
+body.market .editorial-product-image{display:block;width:100%;height:540px;object-fit:cover;filter:saturate(.82)}
+body.market .editorial-photo-note{position:absolute;bottom:14px;right:15px;background:#fffef3e8;color:#576e5b;font-size:11px;padding:8px 11px;border-radius:4px}
+body.market .pdp-data h1{font-weight:750;letter-spacing:-.055em}
+body.market .pdp-price{color:#294237;font-weight:750}
+body.market .pdp-buy{border-radius:8px}
+body.market .shop-tile-visual{overflow:hidden;background:#f1f3ee}
+body.market .shop-tile-photo{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(.83);transition:transform .2s}
+body.market .shop-tile:hover .shop-tile-photo{transform:scale(1.03)}
+/* Other routes: quiet the accents without interfering with scanner and form controls. */
+body.market .recipe-find{border-radius:10px}
+body.market .recipe-card,body.market .recipe-online-card,body.market .recipe-detail-panel{border-radius:8px}
+body.market .rs-card,body.market .rs-drop,body.market .rs-result-card{border-radius:8px}
+@media(max-width:1250px){body.market .market-hero{grid-template-columns:1fr 230px}body.market .hero-words{padding-left:34px}body.market .market-hero-main{grid-template-columns:1fr .9fr}}
+@media(max-width:970px){body.market .market-hero{grid-template-columns:1fr}body.market .market-side-promos{grid-template-columns:1fr 1fr;grid-template-rows:185px}body.market .deals-layout{grid-template-columns:1fr}body.market .market-hero-main{min-height:390px}}
+@media(max-width:760px){
+ body.market .header-main{height:108px}
+ body.market .market-logo-star{height:34px;width:34px}
+ body.market .market-logo-star:after{font-size:21px}
+ body.market .market-logo-name{font-size:20px}
+ body.market .market-hero{padding-top:12px;padding-bottom:12px}
+ body.market .market-hero-main{display:block;min-height:0}
+ body.market .hero-words{padding:32px 24px 27px}
+ body.market .hero-words h1{font-size:37px;max-width:none}
+ body.market .hero-words p{font-size:12px;line-height:1.75}
+ body.market .hero-badges{margin-top:28px}
+ body.market .hero-grocery-visual{height:255px;min-height:255px;margin:0}
+ body.market .hero-editorial-photo{object-position:center 55%}
+ body.market .market-side-promos{grid-template-columns:1fr 1fr;grid-template-rows:164px;gap:9px}
+ body.market .side-promo{padding:15px}
+ body.market .side-promo strong{font-size:17px;line-height:1.2}
+ body.market .side-promo .promo-overline{font-size:8px}
+ body.market .side-promo>b{font-size:9px}
+ body.market .category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ body.market .category-card{min-height:174px;padding:9px}
+ body.market .category-card .category-image{height:108px}
+ body.market .category-card strong{font-size:11px}
+ body.market .category-card small{font-size:9px}
+ body.market .product-visual,body.market .catalog-grid .product-visual{height:167px}
+ body.market .product-body{padding:11px}
+ body.market .product-name{font-size:12px}
+ body.market .price{font-size:17px}
+ body.market .photo-disclaimer{font-size:8px;right:5px;bottom:5px}
+ body.market .deal-banner{min-height:170px}
+ body.market .country-card{min-height:145px;padding:15px}
+ body.market .country-card strong{font-size:21px}
+ body.market .quick-shop-banner>div:first-child{padding:28px 23px}
+ body.market .quick-shop-banner h2{font-size:32px}
+ body.market .quick-goods{min-height:195px}
+ body.market .editorial-product-image{height:340px}
+ body.market .showcase-product-art.editorial-product-art{min-height:340px}
+ body.market .editorial-photo-note{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){body.market .product-card,body.market .product-photo>img,body.market .side-promo:before,body.market .shop-tile-photo{transition:none}}

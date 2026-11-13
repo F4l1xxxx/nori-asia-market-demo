@@ -108,25 +108,29 @@ function nutritionFor(name,category){
 }
 function photoFor(p){
  const n=p.name.toLowerCase();
- if(/mochi|eis|jelly|bonbon|dessert|fruchtgummi/.test(n))return "dessert.jpg";
- if(/keks|cracker|chips|pocky|st[iü]cks|schoko|gebäck|waffel/.test(n))return "cookie.jpg";
- if(/matcha|sencha|oolong|tee|genmaicha|hojicha/.test(n))return "tea.jpg";
- if(p.ci===4)return "drinks.jpg";
- if(p.ci===1)return "spices.jpg";
- if(/ramen|nudeln|udon|soba|pho|wok|vermicelli/.test(n))return "noodles.jpg";
- if(p.ci===0)return "friedrice.jpg";
- if(p.ci===3)return "dumplings.jpg";
- if(/reis|nori|algen/.test(n))return "sushi.jpg";
- return "asian.jpg";
+ const real=name=>"./assets/real/"+name+".jpg";
+ if(/kokosmilch|kokoscreme|kokoswasser/.test(n))return real("coconut-milk");
+ if(/getrocknete shiitake|pilz/.test(n))return real("dried-mushrooms");
+ if(/mochi|jelly|bonbon|dessert|fruchtgummi/.test(n))return real("mochi");
+ if(/keks|cracker|chips|pocky|schoko|gebäck|waffel/.test(n))return real("cookies");
+ if(/matcha/.test(n))return real("matcha-powder");
+ if(/sencha|oolong|tee|genmaicha|hojicha/.test(n))return real("green-tea");
+ if(/milchtee|latte|tapiokaperlen/.test(n))return real("bubble-tea");
+ if(p.ci===4)return real("fruit-drink");
+ if(/sojasauce|tamari|teriyaki|hoisin|austernsauce|fischsauce|reisessig|mirin/.test(n))return real("soy-sauce");
+ if(/currypaste|chili|sambal|gochujang|gewürze|pfeffer|sriracha/.test(n))return real("chili-spices");
+ if(p.ci===1)return real("asian-spices");
+ if(/gyoza|dumpling|mandu|dim sum|wonton|bao|frühlingsrollen/.test(n))return real("gyoza");
+ if(/curry|pad thai|wok|satay/.test(n)&&p.ci===3)return real("thai-curry");
+ if(/ramen|nudeln|udon|soba|pho|vermicelli|mie|mi goreng/.test(n))return real("ramen-noodles");
+ if(/reis|klebreis/.test(n))return real("rice-grains");
+ if(p.ci===3)return real("gyoza");
+ if(/nori|wakame|algen|reispapier/.test(n))return real("sushi-rolls");
+ if(p.ci===2)return real("mochi");
+ return real("asian-spices");
 }
 function pack(p,large){
- const c=p.colors;
- const angle=p.ci===1?"150deg":p.ci===3?"145deg":"125deg";
- return '<div class="pack pack-type-'+p.ci+'" style="background:linear-gradient('+angle+','+c[0]+' 0%,#fff6e1 82%);color:'+c[1]+'">'+
- '<span class="pack-brand">'+safe(p.brand)+'</span>'+
- '<span class="pack-graphic" aria-hidden="true">'+p.emoji+'</span>'+
- '<span class="pack-name">'+safe(p.name)+'</span>'+
- '<span class="pack-size">'+safe(p.size)+'</span></div>';
+ return '<div class="product-photo'+(large?' product-photo-large':'')+'"><img src="'+photoFor(p)+'" alt="Kulinarisches Symbolfoto zu '+safe(p.name)+'" loading="lazy" decoding="async"><span class="photo-disclaimer">Symbolfoto</span></div>';
 }
 function productCard(p){
  const on=favorites.includes(p.id);
@@ -145,9 +149,10 @@ function productCard(p){
 function initCategories(){
  const container=$("#category-grid");
  if(!container)return;
+ const categoryPhotos=["./assets/real/rice-grains.jpg","./assets/real/chili-spices.jpg","./assets/real/mochi.jpg","./assets/real/gyoza.jpg","./assets/real/matcha-powder.jpg","./assets/real/coconut-milk.jpg"];
  container.innerHTML=categories.map((c,i)=>
  '<button class="category-card" data-navcat="'+safe(c.name)+'" style="background:'+c.tone+'">'+
- '<div class="category-image"><span class="cat-emoji" aria-hidden="true">'+c.symbol+'</span></div>'+
+ '<div class="category-image"><img loading="lazy" decoding="async" src="'+categoryPhotos[i]+'" alt=""></div>'+
  '<strong>'+safe(c.name)+'</strong><small>'+safe(c.short)+'</small><span class="cat-arrow">↗</span></button>'
  ).join("");
  const chip=$("#filter-chips");
@@ -308,10 +313,10 @@ function renderCart(){
  }
  container.innerHTML=entries.map(([id,qty])=>{
  const p=byId(id);
- return '<div class="cart-item"><div class="cart-thumb" aria-hidden="true">'+p.emoji+'</div><div><strong>'+safe(p.name)+'</strong><small>'+safe(p.size)+' · '+safe(p.origin)+'</small><div class="qty-row"><button data-qty="'+id+'" data-n="-1" aria-label="Menge reduzieren">−</button><span>'+qty+'</span><button data-qty="'+id+'" data-n="1" aria-label="Menge erhöhen">+</button></div></div><span class="cart-item-price">'+money(p.price*qty)+'</span></div>';
+ return '<div class="cart-item"><div class="cart-thumb" aria-hidden="true"><img src="'+photoFor(p)+'" alt="" loading="lazy"></div><div><strong>'+safe(p.name)+'</strong><small>'+safe(p.size)+' · '+safe(p.origin)+'</small><div class="qty-row"><button data-qty="'+id+'" data-n="-1" aria-label="Menge reduzieren">−</button><span>'+qty+'</span><button data-qty="'+id+'" data-n="1" aria-label="Menge erhöhen">+</button></div></div><span class="cart-item-price">'+money(p.price*qty)+'</span></div>';
  }).join("");
  const rec=recommendation();
- if(rec)container.innerHTML+='<div class="cart-recommendation"><div class="cart-rec-eyebrow">PASST GUT DAZU</div><div class="cart-item"><div class="cart-thumb">'+rec.emoji+'</div><div><strong>'+safe(rec.name)+'</strong><small>'+safe(rec.size)+'</small></div><button class="add-btn" data-add="'+rec.id+'" aria-label="'+safe(rec.name)+' hinzufügen">+</button></div></div>';
+ if(rec)container.innerHTML+='<div class="cart-recommendation"><div class="cart-rec-eyebrow">PASST GUT DAZU</div><div class="cart-item"><div class="cart-thumb"><img src="'+photoFor(rec)+'" alt="" loading="lazy"></div><div><strong>'+safe(rec.name)+'</strong><small>'+safe(rec.size)+'</small></div><button class="add-btn" data-add="'+rec.id+'" aria-label="'+safe(rec.name)+' hinzufügen">+</button></div></div>';
  const s=discounted();
  const diff=Math.max(0,49-s);
  footer.innerHTML='<div class="progress-text"><span>'+(diff?("Noch "+money(diff)+" bis zum Demo-Gratisversand"):"Demo-Gratisversand erreicht")+'</span><strong>'+Math.min(100,Math.round(s/49*100))+' %</strong></div>'+
@@ -354,7 +359,7 @@ function showProduct(id,shouldOpen=true){
  '<h3>Beispiel-Nährwerte je 100 g / 100 ml</h3><div class="nutrition-table">'+
  tab("Energie",d.kj+" kJ / "+d.kcal+" kcal")+tab("Fett",d.fat+" g")+tab("davon gesättigte Fettsäuren",Math.round(d.fat*.32*10)/10+" g")+tab("Kohlenhydrate",d.carbs+" g")+tab("davon Zucker",d.sugars+" g")+tab("Eiweiß",d.protein+" g")+tab("Salz",d.salt+" g")+'</div>'+
  '<div class="detail-warning">Nur Präsentationsdaten: Rezepturen, Allergene, Nährwerte, Herkunft und Preise sind fiktiv und vor echtem Verkauf anhand der Herstellerangaben zu prüfen.</div>'+
- '<div class="cross-sell"><h3>Das könnte zu deiner Auswahl passen</h3><div class="cross-sell-list">'+picks.map(x=>'<button class="cross-item" data-add="'+x.id+'"><span class="cross-emoji">'+x.emoji+'</span><span>'+safe(x.name)+'<br><b>'+money(x.price)+' · + hinzufügen</b></span></button>').join("")+'</div></div></div></div>';
+ '<div class="cross-sell"><h3>Das könnte zu deiner Auswahl passen</h3><div class="cross-sell-list">'+picks.map(x=>'<button class="cross-item" data-add="'+x.id+'"><span class="cross-emoji"><img src="'+photoFor(x)+'" alt="" loading="lazy"></span><span>'+safe(x.name)+'<br><b>'+money(x.price)+' · + hinzufügen</b></span></button>').join("")+'</div></div></div></div>';
  if(shouldOpen)overlay("product");
 }
 function showCheckout(){
@@ -364,7 +369,7 @@ function showCheckout(){
  $("#checkout-content").innerHTML='<span class="section-kicker">DEMONSTRATION / KASSE</span><div class="checkout-steps"><span>✓ 1 Warenkorb</span><span class="active">2 Lieferung & Zahlung</span><span>3 Bestellvorschau</span></div><h2>Fast bei deinem Genussmoment.</h2>'+
  '<p>So kann der echte Bestellprozess später aussehen. Die Eingaben werden weder gespeichert noch versendet; es werden keine Zahlungen ausgeführt.</p>'+
  '<div class="checkout-demo-note">Sicherer Demo-Modus · keine echte Bestellung · keine Zahlungsdaten</div>'+
- '<div class="checkout-item-summary"><h3>Deine Auswahl ('+count()+' Artikel)</h3>'+entries.map(([id,qty])=>{const p=byId(id);return '<div><span>'+p.emoji+' '+safe(p.name)+' × '+qty+'</span><strong>'+money(p.price*qty)+'</strong></div>'}).join("")+'</div>'+
+ '<div class="checkout-item-summary"><h3>Deine Auswahl ('+count()+' Artikel)</h3>'+entries.map(([id,qty])=>{const p=byId(id);return '<div><span>'+safe(p.name)+' × '+qty+'</span><strong>'+money(p.price*qty)+'</strong></div>'}).join("")+'</div>'+
  '<button type="button" id="fill-demo-data" class="fill-demo-data">✦ Beispielangaben für die Vorschau einfügen</button>'+
  '<form id="checkout-form"><div class="checkout-fields">'+
  '<label>Vorname<input autocomplete="off" name="first" placeholder="Vorname" required minlength="2"></label>'+
@@ -419,7 +424,7 @@ function renderSearchSuggestions(){
  const matches=matchingSearchProducts(query);
  const entries=matches.slice(0,6).map(p=>
    '<button type="button" class="search-suggestion" data-search-product="'+p.id+'">'+
-   '<span class="search-suggestion-icon" aria-hidden="true">'+p.emoji+'</span>'+
+   '<span class="search-suggestion-icon" aria-hidden="true"><img src="'+photoFor(p)+'" alt="" loading="lazy"></span>'+
    '<span class="search-suggestion-label"><strong>'+safe(p.name)+'</strong><small>'+safe(p.size)+' · '+safe(p.category)+'</small></span>'+
    '<span class="search-suggestion-price">'+money(p.price)+'</span></button>'
  ).join("");
@@ -488,5 +493,5 @@ function initializeEvents(){
  });
 }
 initCategories();featured();renderCatalog();renderCart();updateHeader();initializeEvents();
-window.NORI_DEMO={productCount:products.length,products,cartContents:()=>({...cart}),filteredCount:()=>listProducts().length,addToCart:add,showCheckout,searchResults:query=>rankedSearchProducts(query),complementaryProducts,refresh:()=>{renderCatalog();featured();renderCart();updateHeader()},formatMoney:money};
+window.NORI_DEMO={productCount:products.length,products,cartContents:()=>({...cart}),filteredCount:()=>listProducts().length,addToCart:add,showCheckout,searchResults:query=>rankedSearchProducts(query),complementaryProducts,productImage:photoFor,refresh:()=>{renderCatalog();featured();renderCart();updateHeader()},formatMoney:money};
 })();
