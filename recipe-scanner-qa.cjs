@@ -41,6 +41,23 @@ const server=http.createServer((req,res)=>{
     assert.equal(checks[1].name,'Reisnudeln 3 mm');
     assert.equal(checks[2].name,'Sojasauce Mild');
     assert.equal(checks[3].confidence,'missing','Onions are not in this demo catalog');
+    const layout=await page.evaluate(()=>{
+      const words=[
+        [1,1,1,50,100,'Zubereitung'],[1,1,2,780,100,'Zutaten'],
+        [2,1,1,55,240,'Schritt'],[2,1,2,112,240,'1'],
+        [3,1,1,780,240,'150'],[3,1,2,819,240,'g'],[3,1,3,840,240,'Sushi-Reis'],
+        [4,1,1,55,300,'Reis'],[4,1,2,100,300,'waschen'],[4,1,3,180,300,'und'],
+        [4,1,4,780,300,'20'],[4,1,5,808,300,'ml'],[4,1,6,840,300,'Reisessig'],
+        [5,1,1,780,360,'Salz'],
+        [6,1,1,780,430,'Zutaten'],[6,1,2,853,430,'online'],[6,1,3,920,430,'bestellen'],
+        [7,1,1,780,470,'Rezeptwelt']
+      ];
+      const tsv='level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n'+words.map(([b,l,word,left,top,txt])=>['5','1',b,'1',l,word,left,top,60,18,95,txt].join('\t')).join('\n');
+      const data=window.ASIA_RECIPE_SCANNER.extractIngredientsFromLayout({tsv});
+      return {focused:data.focused,items:window.ASIA_RECIPE_SCANNER.analyzeText(data.text).map(r=>r.label)};
+    });
+    assert.equal(layout.focused,true,'OCR isolates ingredient column');
+    assert.deepEqual(layout.items,['Sushi-Reis','Reisessig','Salz'],'No preparation, navigation or CTA leakage');
     await page.click('#rs-demo');
     const info=await page.evaluate(()=>({rows:[...document.querySelectorAll('#rs-review-list .rs-result')].length,
       count:document.querySelector('#cart-count').textContent,

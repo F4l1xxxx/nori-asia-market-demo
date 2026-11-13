@@ -26,7 +26,7 @@
     ["Kokoscreme Extra",/\b(kokos ?creme|coconut cream)\b/,"high"],
     ["Kokosmilch Cremig",/\b(kokos ?milch|coconut milk)\b/,"high"],
     ["Sojasauce Dunkel",/\b(dunkle? soja ?sauce|dark soy sauce)\b/,"high"],
-    ["Sojasauce Mild",/\b(soja ?sauce|soy sauce|shoyu)\b/,"high"],
+    ["Sojasauce Mild",/\b(soja ?sauce|soja ?sosse|soja ?soße|sojasobe|soy sauce|shoyu)\b/,"high"],
     ["Sriracha Chili Sauce",/\b(sriracha|siracha)\b/,"high"],
     ["Chili Sauce Sweet",/\b(sweet chili|suss ?scharfe? chili|sweet chilli)\b/,"high"],
     ["Sambal Oelek",/\b(sambal)\b/,"high"],
@@ -79,12 +79,16 @@
     const v=Number(x.replace(",","."));return Number.isFinite(v)?v:null;
   }
   const unitRx="kg|g|gr|gramm|ml|l|liter|el|tl|tbsp|tsp|stuck|stueck|stucke|dose|dosen|bund|packung|packungen|zehe|zehen|prise|prisen";
+  const bareIngredients=/^(salz|zucker|pfeffer|wasser|wasabi ?paste|wasabipaste|lachsfilet|tofu|gurke|karotte|mohre|zwiebel|fruhlingszwiebel|knoblauch|ingwer|koriander|limette|zitrone|chili|ei|eier|honig|mehl|ol|butter|sesam|reisessig|sojasosse|sojasobe|sojasauce)(?: \(.*\))?$/;
+  const uiAndRecipeText=/\b(zubereitung|anleitung|schritt|rezeptwelt|entdecken|zubereitungszeit|kochzeit|vorbereitung|in den warenkorb|online bestellen|jetzt kaufen|schwierigkeitsgrad|bewertungen|registrieren|newsletter|zutatenliste anzeigen|mehr anzeigen|das rezept|zum rezept|die zutaten|die zubereitung|nach belieben)\b/;
+  const cookingInstructions=/\b(waschen|wasche|schneiden|schneide|braten|braten lassen|kochen|kocheln|erhitzen|vermischen|umruhren|abkuhlen|zugeben|hinzufugen|bestreuen|servieren|abschmecken|aufkochen|quellen lassen|tupfen|formen|verteilen|topf|pfanne|herdplatte)\b/;
   function parseLine(source){
     let line=String(source||"").trim().replace(/^[\s•●▪◦*✓☑☐\-–—]+/,"").replace(/^\d+[.)]\s+(?=\D)/,"").replace(/^zutaten?\s*:\s*/i,"").trim();
     // Tesseract may confuse the lowercase "l" in "ml" with "i" or "1".
     // Only repair the unit directly after a numeric quantity, never ingredient names.
-    line=line.replace(/^(\d+(?:[.,]\d+)?)\s*m[i1]\b/i,"$1 ml");
-    if(!line||line.length>115||/^(zutat|ingredient|portion|fur \d+|for \d+|personen|zubereitung|anleitung|schritt|instruction|prep |cook |zeit:|serves)/i.test(norm(line)))return null;
+    line=line.replace(/^(\d+(?:[.,]\d+)?)\s*m[i1]\b/i,"$1 ml").replace(/^(\d+(?:[.,]\d+)?)\s*m[l1i]_+\s*/i,"$1 ml ");
+    const normalizedLine=norm(line);
+    if(!line||line.length>95||uiAndRecipeText.test(normalizedLine)||cookingInstructions.test(normalizedLine)||/^(zutat|ingredient|portion|fur \d+|for \d+|personen|instruction|prep |cook |zeit:|serves|stuck|stueck|stucke)/i.test(normalizedLine))return null;
     let q=null,u="",label=line;
     const m=line.match(new RegExp("^(\\d+(?:[.,]\\d+)?|\\d+\\s*\\/\\s*\\d+|½|¼|¾)\\s*("+unitRx+")?\\b\\s*(.*)$","i"));
     if(m&&m[3]&&/[a-zA-ZäöüÄÖÜ]/.test(m[3])){q=number(m[1]);u=(m[2]||"").toLowerCase();label=m[3].trim();}
@@ -92,11 +96,46 @@
       const tail=line.match(new RegExp("^(.+?)\\s+(\\d+(?:[.,]\\d+)?|\\d+\\/\\d+)\\s*("+unitRx+")$","i"));
       if(tail){q=number(tail[2]);u=tail[3].toLowerCase();label=tail[1].trim();}
     }
-    if(!/[a-zäöü]/i.test(label))return null;
+    label=label.replace(/^[_:;.,\s]+|[_:;.,\s]+$/g,"").trim();
+    if(!/[a-zäöü]/i.test(label)||(q==null&&/^\d/.test(label))||/[.!?;]/.test(label)||norm(label).split(" ").length>7)return null;
     const found=matchIngredient(label);
-    // Short, unmatched headlines are excluded unless they look like a real ingredient line.
-    if(!found.product&&q==null&&/\b(zutaten|rezepte?|kochen|schritt|vorbereitung)\b/.test(norm(label)))return null;
+    if(!found.product&&q!=null&&norm(label).split(" ").length>5)return null;
+    // Bare words from an entire webpage are usually navigation or adverts, not ingredients.
+    if(!found.product&&q==null&&!bareIngredients.test(norm(label)))return null;
     return {source:line,label,q,unit:u,product:found.product,confidence:found.confidence,added:false};
+  }
+  // OCR's plain-text reading order interleaves the left preparation column with
+  // the right ingredient column. TSV word coordinates let us isolate that panel.
+  function extractIngredientsFromLayout(data){
+    const lines=String(data?.tsv||"").trim().split(/\r?\n/);
+    if(lines.length<2)return {focused:false,text:"",reason:"Keine Positionsdaten der Texterkennung"};
+    const words=lines.slice(1).map(line=>{
+      const c=line.split("\t");
+      if(c.length<12||c[0]!=="5")return null;
+      return {key:c.slice(1,5).join("/"),left:Number(c[6]),top:Number(c[7]),width:Number(c[8]),height:Number(c[9]),text:c.slice(11).join("\t").trim()};
+    }).filter(w=>w&&w.text&&Number.isFinite(w.left)&&Number.isFinite(w.top));
+    const headers=words.filter(w=>/^(zutaten|ingredients)$/i.test(norm(w.text)));
+    const candidates=[];
+    for(const h of headers){
+      const left=Math.max(0,h.left-24),from=h.top+h.height+12;
+      const selected=words.filter(w=>w.left>=left&&w.top>=from);
+      const groups=new Map();
+      for(const w of selected){
+        if(!groups.has(w.key))groups.set(w.key,[]);
+        groups.get(w.key).push(w);
+      }
+      const ordered=[...groups.values()].sort((a,b)=>Math.min(...a.map(w=>w.top))-Math.min(...b.map(w=>w.top)));
+      const ingredients=[];
+      for(const lineWords of ordered){
+        const row=lineWords.sort((a,b)=>a.left-b.left).map(w=>w.text).join(" ").trim();
+        const normalized=norm(row);
+        if(/\b(zutaten online bestellen|zutaten bestellen|zum warenkorb|jetzt bestellen|zum rezept)\b/.test(normalized))break;
+        if(parseLine(row))ingredients.push(row);
+      }
+      candidates.push({text:ingredients.join("\n"),focused:ingredients.length>0,count:ingredients.length,headerLeft:h.left});
+    }
+    candidates.sort((a,b)=>b.count-a.count||b.headerLeft-a.headerLeft);
+    return candidates[0]?.focused?candidates[0]:{focused:false,text:"",reason:"Keine eindeutige Zutaten-Spalte erkannt"};
   }
   function packInfo(p){
     const m=String(p.size||"").match(/(\d+(?:[.,]\d+)?)\s*(kg|g|ml|l)\b/i);
@@ -180,7 +219,7 @@
     $("#rs-add").disabled=!state.rows.some(r=>r.product&&!r.added&&r.available);
     $("#rs-summary-note").textContent=possible?possible+" ähnliche Treffer werden nicht automatisch übernommen.":"Mengen und Zutaten vor einer echten Bestellung immer prüfen.";
   }
-  function runAnalysis(text,fromImage=false){
+  function runAnalysis(text,fromImage=false,allowAuto=true){
     state.raw=String(text||"");
     $("#rs-text").value=state.raw;
     state.rows=analyzeText(state.raw);
@@ -188,7 +227,7 @@
     const fingerprint=norm(state.raw);
     const alreadyImported=state.imported.has(fingerprint);
     if(alreadyImported){state.rows.filter(r=>r.product&&r.confidence==="high"&&r.available).forEach(r=>r.added=true)}
-    const auto=$("#rs-autofill").checked;
+    const auto=allowAuto&&$("#rs-autofill").checked;
     const done=auto&&!alreadyImported?applyRows(state.rows.filter(r=>r.confidence==="high")): {added:0,packages:0};
     if(done.added)state.imported.add(fingerprint);
     renderRows();
@@ -233,10 +272,18 @@
         }
       });
       setProgress(55,"Text wird aus dem Screenshot gelesen …");
-      const data=await worker.recognize(file);
+      const data=await worker.recognize(file,{}, {text:true,tsv:true});
       setProgress(100,"Texterkennung abgeschlossen");
-      const text=data?.data?.text?.trim()||"";
-      runAnalysis(text,true);
+      const focused=extractIngredientsFromLayout(data?.data);
+      if(focused.focused){
+        runAnalysis(focused.text,true);
+        setNotice(focused.count+" Zutatenzeilen gezielt aus dem Zutatenbereich erkannt. Bitte Mengen und Artikel prüfen.","success");
+      }else{
+        const original=data?.data?.text?.trim()||"";
+        $("#rs-text").value=original;
+        state.raw=original;state.rows=[];renderRows();
+        setNotice("Zutatenbereich nicht sicher gefunden. Bitte Screenshot auf die Zutatenliste zuschneiden oder nur die Zutaten rechts ins Textfeld kopieren. Es wurde nichts in den Warenkorb gelegt.","warn");
+      }
     }catch(err){
       setNotice("Die automatische Bilderkennung hat hier nicht funktioniert. Du kannst die Zutaten unten als Text einfügen. ("+String(err.message||err).slice(0,110)+")","warn");
     }finally{
@@ -301,5 +348,5 @@
     promo();
     if(new URLSearchParams(location.search).get("seite")==="rezeptscanner")scannerView();
   });
-  window.ASIA_RECIPE_SCANNER={analyzeText,calculate,matchIngredient,processFile};
+  window.ASIA_RECIPE_SCANNER={analyzeText,calculate,matchIngredient,extractIngredientsFromLayout,processFile};
 })();
