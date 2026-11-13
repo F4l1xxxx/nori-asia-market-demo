@@ -97,7 +97,7 @@ body.market .add-btn:hover{background:#1f3429}
 body.market .filter-bar{border-radius:7px;border-color:#e0e8df}
 @media(min-width:1020px){
  body.market .filter-bar{display:flex;flex-direction:column;align-items:stretch;gap:13px}
- body.market .chip-scroll{width:100%;display:flex;flex-wrap:wrap;gap:8px;overflow:visible;padding-bottom:0}
+ body.market .chip-scroll{width:100%;max-width:none;display:flex;flex-wrap:wrap;gap:8px;overflow:visible;padding-bottom:0}
  body.market .filter-controls{width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:12px}
 }
 body.market .chip{background:#f8f9f6;border:1px solid #dfe7df;border-radius:5px;font-weight:600}
